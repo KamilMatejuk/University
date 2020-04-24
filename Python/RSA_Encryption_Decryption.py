@@ -1,10 +1,29 @@
+# Kamil Matejuk
 # algorytm RSA https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Encryption
-
 import sys
 import math
 import random
 import time
 
+'''
+Napisz program, który szyfruje i deszyfruje dany plik algorytm RSA.
+Do sprawdzania, czy dana liczba jest pierwsza wykorzystaj dowolny test pierwszości np. test Millera-Rabina.
+W programie powinna być możliwość generowania kluczy do szyfrowania i deszyfrowania plików
+(key.pub - klucz publiczny, key.prv - klucz prywatny).
+Np.
+    $ python rsa.py --gen-keys 128
+    $ ls
+    rsa.py key.pub key.prv
+
+Klucze mogą być dowolnie długie np. bits=128 bitowe, czyli p i q mają wtedy długość int(log(2)/log(10)*(bits)) cyfr.
+Przy uruchomianiu programu z parametrem --encrypt oraz ciągiem znaków do zakodowania wynik zostaje wyświetlony na
+standardowym wyjściu (kodowanie korzysta z klucza key.pub, jeśli kluczy nie ma to wyświetlony zostaje błąd):
+    $ python rsa.py --encrypt Python
+    21437302530112407657289772777280768429
+Dekodowanie odbywa się podobnie (dekodowanie korzysta z klucza key.prv):
+    $ python rsa.py --decrypt 21437302530112407657289772777280768429
+    Python
+'''
 
 def generateKeys(bits):
 	length = int(math.log(2) / math.log(10) * int(bits))
