@@ -1,6 +1,8 @@
+# Kamil Matejuk
 import os
 import sys
 
+# Zaimplementuj algorytm zamieniający wielkie litery na małe w nazwie każdego pliku z katalogu (i rekurencyjnie na niższych poziomach).
 
 def renameLowercase(basePath):
 	try:
