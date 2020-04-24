@@ -1,5 +1,5 @@
 # Polecenie
-Napisz funkcję *match(char* wzorzec, char* łańcuch)*, która ustala zgodność wzorca z łańcuchem.
+Napisz funkcję match(char* wzorzec, char* łańcuch), która ustala zgodność wzorca z łańcuchem.
 * Znak ? oznacza zgodność z dowolnym innym znakiem. 
 * Znak * oznacza zgodność z dowolnym, również pustym, ciągiem znaków w łańcuchu.
 * Znak różny od ? i * oznacza zgodność tylko z samym sobą.
