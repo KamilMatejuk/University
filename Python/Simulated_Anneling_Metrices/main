@@ -1,0 +1,151 @@
+#!/usr/bin/python
+
+#  Kamil Matejuk
+
+import sys
+import math
+import time
+import random
+import copy
+
+
+def printMatrix(M):
+	# for line in M:
+	# 	for n in line:
+	# 		spaces = ''.join([' ' for i in range(max([5 - len(str(n)), 0]))])
+	# 		print(str(n) + spaces, end="")
+	# 	print()
+
+	for line in M:
+		for n in line:
+			print(str(int(n)), end=" ", file=sys.stderr)
+		print(file=sys.stderr)
+
+
+def getDistanceFunction(M, n, m):
+	def dist(Mprim):
+		suma = 0
+		for i in range(len(M)):
+			for j in range(len(M[i])):
+				suma += (M[i][j] - Mprim[i][j])**2
+		return suma/(n*m)
+	return dist
+
+
+def createInitialMatrix(M, possibleValues, possibleA, possibleB):
+	n = len(M)
+	m = len(M[0])
+	a = random.choice(possibleA)
+	b = random.choice(possibleB)
+	matrix = []
+	for j in range(int(n/a)):
+		row = []
+		for i in range(int(m/b)):
+			r = random.choice(possibleValues)
+			row += [r for bb in range(b)]
+		for aa in range(a):
+			matrix.append(row)
+	return matrix
+
+
+def getDivisors(n, k):
+	# zwraca listę dzielników liczby n, wiekszych lub równych k
+	divisors = []
+	for i in range(1, int(math.sqrt(n)+1)):
+		if n % i == 0:
+			if i >= k:
+				divisors.append(int(i))
+			if n/i != i and n/i >= k:
+				divisors.append(int(n/i))
+	return divisors
+
+
+def p(x, y, T, distance):
+	fx = distance(x)
+	fy = distance(y)
+	if fy < fx:
+		return 1
+	else:
+		df = (fx - fy)
+		return math.exp(df / T)
+
+
+def neighbour(x, T, possibleValues, possibleA, possibleB):
+	# zmiana jednej wartości na nową losową, nie zmienia układu macierzy
+	# r - losowa wartosć z popredniej macierzy x
+	r = x[random.randint(0, len(x)-1)][random.randint(0, len(x[0])-1)]
+	newValue = random.choice(possibleValues)
+	while newValue == r:
+		newValue = random.choice(possibleValues)
+	tempX = copy.deepcopy(x)
+	for i in range(len(tempX)):
+		for j in range(len(tempX[i])):
+			if tempX[i][j] == r:
+				tempX[i][j] = newValue
+	return tempX
+
+
+def main(t, n, m, k, M, distance):
+	# t - max program execution time
+	# k - block size of matrix: block (a x b, a>=k, b>=k)
+	# M - initial matrix of size (n x m)
+	# distance - function calculating distance to M
+	possibleValues = [0, 32, 64, 128, 160, 192, 223, 255]
+	possibleA = getDivisors(n, k)	# possible values fo a >= k
+	possibleB = getDivisors(m, k)	# possible values fo b >= k
+
+	T = 500 	# initail temperature
+	c = 0.995	# cooling rate
+	x = createInitialMatrix(M, possibleValues, possibleA, possibleB)	# initial solution
+	bestSolution = copy.deepcopy(x) # initial best solution
+	currSolution = copy.deepcopy(x) # initial current solution
+	startTime = time.time()	# start time
+
+	# licznik sprawdzający od ilu iteracji nie udało się zmienić currSolution
+	stuckCounter = 0
+	maxStuck = 50
+	history = []
+
+	while (T > 5) and (time.time()-startTime) < float(t):
+		# generate new solution
+		newX = neighbour(currSolution, T, possibleValues, possibleA, possibleB)
+		# change current solution with probability p
+		if p(currSolution, newX, T, distance) > random.random():
+			currSolution = copy.deepcopy(newX)
+			stuckCounter = 0
+			T *= c
+		# change global minimum
+		if distance(currSolution) < distance(bestSolution):
+			bestSolution = copy.deepcopy(currSolution)
+		# is stuck ?
+		if stuckCounter > maxStuck:
+			history.append(bestSolution)
+			newX = createInitialMatrix(M, possibleValues, possibleA, possibleB)
+			bestSolution = copy.deepcopy(newX)
+			currSolution = copy.deepcopy(newX)
+			stuckCounter = 0
+			T *= 0.999
+		stuckCounter += 1
+		# print(f'T: {T}\tbest: {distance(bestSolution)}\t curr: {distance(currSolution)}')
+
+	history.append(bestSolution)
+	for h in history:
+		if distance(h) < distance(bestSolution):
+			bestSolution = h
+
+	# print solution
+	printMatrix(bestSolution)
+	print(distance(bestSolution))
+
+
+if __name__ == '__main__':
+	try:
+		[t,n,m,k] = [int(i) for i in sys.stdin.readline().split()]
+		matrix = [[int(i) for i in sys.stdin.readline().split()] for i in range(n)]
+		distance = getDistanceFunction(matrix, n, m)
+		main(t, n, m, k, matrix, distance)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)
+	except ValueError:
+		print("Not integer arguments", file=sys.stderr)

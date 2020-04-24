@@ -1,0 +1,78 @@
+#!/usr/bin/python
+import sys
+import math
+from functools import reduce
+import time
+import random
+
+initialRange = 1000 # zakres [-1000, 1000]
+neighbourhoodRange = 200
+stuckLimit = 50 # jeżeli od tylu powtórzeń jest ta sama wartośc minimalna, losuje nowy pkt początkowy  a osiągnięte dotychczas minimum zapisuje
+
+def norma(x):
+	# zał - norma euklidesowa ||x|| = (x1^2 + x2^2 + ... + xn^n) ^ (1/n)
+	return (sum(i**2 for i in x))**(1/len(x))
+
+
+def happycat(x):
+	return ((norma(x)**2 - len(x))**2)**0.125 + (1/len(x))*(0.5*(norma(x)**2 + sum(i for i in x)))
+
+
+def griewank(x):
+	return 1 + (sum(i**2 for i in x))/4000 - (reduce(lambda a,b: a* b, map(lambda c: math.cos(c / (x.index(c)+1)**0.5),x)))
+
+
+def main(t, function):
+	# t - max liczba sekund wykonywania programu
+	startTime = time.time()
+	ismin = False
+	x = [ (2*random.random()-1)*initialRange for i in range(4) ]
+	prevx = x.copy()
+	prevMinimums = []
+	stuckCounter = 0
+
+	while not ismin and (time.time()-startTime) < float(t):
+		prevx = x.copy()
+		dx = (2*random.random()-1)*neighbourhoodRange
+		minNeighbourValue = function(x)
+		minNeighbour = x.copy()
+		# sąsiedztwo to 4 opcje, które róznią się o stałą dx na jednej ze współrzednych
+		for i in range(4):
+			tempx = x.copy()
+			tempx[i] += dx
+			if function(tempx) < minNeighbourValue:
+				minNeighbourValue = function(tempx)
+				minNeighbour = tempx.copy()
+		# jeśli w sąsiedztwie jest mniejsza wartość funckji, to zmiena się x na ten z miejszą wartością
+		x = minNeighbour.copy()
+
+		if prevx == x:
+			stuckCounter += 1
+		else:
+			stuckCounter = 0
+
+		if stuckCounter >= stuckLimit:
+			prevMinimums.append(x.copy())
+			x = [ (2*random.random()-1)*initialRange for i in range(4) ]
+			stuckCounter = 0
+
+	prevMinimums.append(x.copy())
+	x = min(prevMinimums)
+	print(x[0], x[1], x[2], x[3], function(x))
+
+
+
+if __name__ == '__main__':
+	try:
+		data = []
+		for line in sys.stdin:
+			data += line.split()
+		t = data[0]
+		func = data[1]
+		if func == "0":
+			main(t, happycat)
+		else:
+			main(t, griewank)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)

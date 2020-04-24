@@ -1,0 +1,107 @@
+#!/usr/bin/python
+import sys
+from functools import reduce
+import time
+
+tabuListPeriod = 5
+stuckLimit = 50 # jeżeli od tylu powtórzeń jest ta sama wartośc currBestSolution uznajemy to za koniec
+
+
+def tsp(t, distances):
+	startTime = time.time()
+	ismin = False
+	n = len(distances)
+	currSolution = [i+1 for i in range(n)] + [1]
+	currBestSolution = currSolution.copy()
+	tabuList = []
+	# do sprawdzania czy zakończylismy
+	prevBest = currBestSolution.copy()
+	stuckCounter = 0
+
+	while not ismin and (time.time()-startTime) < float(t):
+		currSolution, bestSwap = getBestFromNeighbours(currSolution, distances, tabuList, currBestSolution)
+		# zmniejszanie licznika czasu w tabuliście
+		declineTabuListPeriod(tabuList)
+		# inwersja wykonanego swapa jest dodawana do tabulist
+		tabuList.append([(bestSwap[1], bestSwap[0]), tabuListPeriod])
+		# czy osiągneliśmy lepsza wartość globalnie
+		if countCost(currSolution, distances) < countCost(currBestSolution, distances):
+			currBestSolution = currSolution.copy()
+		# zliczanie powtórzeń z tą samą najlepszą wartościa
+		if prevBest == currBestSolution:
+			stuckCounter += 1
+		if stuckCounter >= stuckLimit:
+			ismin = True
+		prevBest = currBestSolution
+	
+	print(countCost(currBestSolution, distances))
+	for i in currBestSolution:
+		print(i, end=" ", file=sys.stderr)
+
+
+def allSwaps(n):
+	for i in range(2, n):
+		for j in range(2, n):
+			if i != j:
+				yield (i,j)
+
+
+def getBestFromNeighbours(currSolution, distances, tabuList, currBestSolution):
+	bestValue = sum(sum(i for i in j) for j in distances) # suma wszystkich mozliwych dystansów
+	bestSwap = (0, 0)
+	for (i,j) in allSwaps(len(currSolution)):
+		neighbour = swap(currSolution,i,j)
+		value = countCost(neighbour, distances)
+		# jezeli nie jest w tabu, lub jeżeli jest w tabu, ale ma niższą wartość niż currBestSolution (aspiracje)
+		if notInList(tabuList, i, j) or value < countCost(currBestSolution, distances):
+			# wybór najlepszego elementu
+			if value < bestValue:
+				bestValue = value
+				best = neighbour
+				bestSwap = (i, j)
+	return best, bestSwap
+
+
+def notInList(lista, i, j):
+	return len([el for el in lista if el[0] == (i,j)]) == 0
+	# if len(lista) == 0:
+	# 	return True
+	# for element in lista:
+	# 	element[1] -= 1
+	# 	if element[0] == (i,j):
+	# 		return False
+	# return True
+
+
+def declineTabuListPeriod(tabulist):
+	for el in tabulist:
+		el[1] -= 1
+		if el[1] <= 0:
+			tabulist.remove(el)
+
+def swap(x,a,b):
+	# a,b to elemnty z listy x
+	i = x.index(a)
+	j = x.index(b)
+	try:
+		y = x.copy()
+		y[i] = b
+		y[j] = a
+		return y
+	except ValueError:
+		# w liscie nie ma elemntu a lub b
+		return x
+
+
+def countCost(permutation, distances):
+	return -1 if len(permutation)-len(distances) != 1 else sum(distances[permutation[a]-1][permutation[a+1]-1] for a in range(len(permutation)-1))
+
+
+if __name__ == '__main__':
+	try:
+		t = sys.stdin.readline().split()[0]
+		distances = [[int(i) for i in line.split()] for line in sys.stdin.readlines()]
+		tsp(t, distances)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)

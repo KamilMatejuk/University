@@ -1,0 +1,73 @@
+#!/usr/bin/python
+
+#  Kamil Matejuk
+
+import sys
+import time
+
+from simulatedAnneling import *
+
+
+def SA(t, n, m, maze):
+	# t - max program execution time
+	# n,m - size of maze
+
+	T = 2000 	# initail temperature
+	c = 0.999	# cooling rate
+	path = trimPath(maze, createInitial(maze))	# initial solution
+	bestSolution = path 	# initial best solution
+	currSolution = path 	# initial current solution
+	startTime = time.time()	# start time
+
+	# licznik sprawdzający od ilu iteracji nie udało się zmienić currSolution
+	stuckCounter = 0
+	maxStuck = 100
+	history = []
+
+	while (T > 1) and (time.time()-startTime) < float(t):
+		# generate new solution
+		newPath = trimPath(maze, neighbour(maze, currSolution))
+		# change current solution with probability p
+		if p(currSolution, newPath, maze, T) > random.random():
+			currSolution = newPath
+			stuckCounter = 0
+			T *= c
+			# print(f'T: {T}\tbest: {valuatePath(maze, bestSolution)}\t curr: {valuatePath(maze, currSolution)} path: {bestSolution}')
+		# change global minimum
+		if valuatePath(maze, currSolution) < valuatePath(maze, bestSolution):
+			bestSolution = currSolution
+		# is stuck ?
+		if stuckCounter > maxStuck:
+			history.append(bestSolution)
+			newPath = trimPath(maze, createInitial(maze))
+			bestSolution = newPath
+			currSolution = newPath
+			stuckCounter = 0
+			T *= 0.999
+		stuckCounter += 1
+
+	history.append(bestSolution)
+	for h in history:
+		if valuatePath(maze, h) < valuatePath(maze, bestSolution):
+			bestSolution = h
+
+	# # print solution and show path
+	# showMaze(maze)
+	# print(bestSolution)
+	# print(valuatePath(maze,bestSolution))
+	# drawPath(maze, bestSolution)
+	print(len(bestSolution))
+	print(bestSolution, file=sys.stderr)
+
+
+
+if __name__ == '__main__':
+	try:
+		[t,n,m] = [int(i) for i in sys.stdin.readline().split()]
+		maze = [[int(i) for i in sys.stdin.readline().split()[0]] for i in range(n)]
+		SA(t, n, m, maze)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)
+	except ValueError:
+		print("Not integer arguments", file=sys.stderr)

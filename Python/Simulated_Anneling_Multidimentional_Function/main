@@ -1,0 +1,88 @@
+#!/usr/bin/python
+
+#  Kamil Matejuk
+
+import sys
+import math
+import time
+import random
+
+
+def salomonFunction(x):
+	return 1 - math.cos(2 * math.pi * (sum(i*i for i in x))**0.5) + 0.1 * (sum(i*i for i in x))**0.5
+
+
+def p(x, y, T):
+	fx = salomonFunction(x)
+	fy = salomonFunction(y)
+	if fy < fx:
+		return 1
+	else:
+		df = fx - fy
+		return math.exp(df / T)
+
+
+def neighbour(x, T):
+	rangee = 0.33*T*T + 7*T + 25
+	return [x[i] + random.uniform(-rangee, rangee) for i in range(len(x))]
+
+
+def main(t, x):
+	# t - max program execution time
+	# x - initial value
+	T = 5000 # initail temperature
+	bestSolution = x.copy() # initial best solution
+	currSolution = x.copy() # initial current solution
+	startTime = time.time()	# start time
+
+	# licznik sprawdzający od ilu iteracji nie udało się zmienić currSolution
+	stuckCounter = 0
+	maxStuck = 100
+	history = []
+
+	while (T > 0.5) and (time.time()-startTime) < float(t):
+		# generate new solution
+		newX = neighbour(currSolution, T)
+		# change current solution with probability p
+		if p(currSolution, newX, T) > random.random():
+			currSolution = newX.copy()
+			stuckCounter = 0
+			T *= 0.995
+		# change global minimum
+		if salomonFunction(currSolution) < salomonFunction(bestSolution):
+			bestSolution = currSolution.copy()
+		# is stuck ?
+		if stuckCounter > maxStuck:
+			history.append(bestSolution)
+			newX = [random.randint(-100, 100) for i in range(len(x))]
+			bestSolution = newX.copy()
+			currSolution = newX.copy()
+			stuckCounter = 0
+			T *= 0.999
+		stuckCounter += 1
+
+	history.append(bestSolution)
+	for h in history:
+		if salomonFunction(h) < salomonFunction(bestSolution):
+			bestSolution = h
+
+	# print solution
+	for xi in bestSolution:
+		print(float(xi), end=" ")
+	print(salomonFunction(bestSolution))
+
+
+if __name__ == '__main__':
+	try:
+		data = []
+		for line in sys.stdin:
+			data += line.split()
+		t = data[0]
+		exes = [int(x) for x in data[1:5]]
+		main(t, exes)
+
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)
+	except ValueError:
+		print("Not integer arguments", file=sys.stderr)

@@ -1,0 +1,92 @@
+#!/usr/bin/python
+import sys
+import time
+import random
+
+
+##################################################################################################
+### poprawa znalezionej sekwencji do optymalnej
+def optimize(solution, t, maze):
+	solution = [i for i in solution]
+	while solution.count('U') > 0 and solution.count('D'):
+		solution.remove('U')
+		solution.remove('D')
+	while solution.count('L') > 0 and solution.count('R'):
+		solution.remove('L')
+		solution.remove('R')
+	return ''.join(solution)
+
+
+##################################################################################################
+### znalezienie jakoegokolwiek połączenia do wyjścia
+def findWay(t, maze):
+	final = False
+	sequence = ''
+	x, y = getStartPosition(maze)
+	while not final:
+		sequence, final = bestFromNearNeighbourhood(sequence, maze, x, y) # x,y to pozycje przed wykonaniem koroku
+		if sequence[-1] == 'U':		y -= 1
+		elif sequence[-1] == 'D':	y += 1
+		elif sequence[-1] == 'L':	x -= 1
+		elif sequence[-1] == 'R':	x += 1
+	return sequence
+
+
+def bestFromNearNeighbourhood(seq, maze, x, y):
+	# sprawdza każdy z 4 kierunków i wybiera najlepszy, na bazie tego czy sąsiaduje ze ścianą lub wyjściem, oraz czy się nie cofa
+	if maze[y][x] == 8:		return seq, True
+	maxseq = seq
+	maxvalue = 0
+	default = ['U','D','L','R']
+	opposite = ['D','U','R','L']
+	for i in default:
+		value = 0
+		if len(seq) > 1 and seq[-1] == opposite[default.index(i)]:	value -= 2 	# cofanie się
+		if i == 'U':	value += val(maze, value, x, y-1)
+		elif i == 'D':	value += val(maze, value, x, y+1)
+		elif i == 'L':	value += val(maze, value, x-1, y)
+		elif i == 'R':	value += val(maze, value, x+1, y)
+		if value > maxvalue:
+			maxvalue = value
+			maxseq = seq + i
+	return maxseq, False
+
+
+def val(maze, value, x, y):
+	if maze[y][x] == 1:	value -= 5			# wejście w ścianę
+	elif maze[y][x] == 8:	value += 10		# znalezienie wyjscia
+	elif maze[y-1][x] == 1 or maze[y+1][x] == 1 or maze[y][x-1] == 1 or maze[y][x+1] == 1:	value += 2	# sąsiedztwo ściany
+	elif maze[y-1][x] == 8 or maze[y+1][x] == 8 or maze[y][x-1] == 8 or maze[y][x+1] == 8:	value += 5	# sąsiedztwo wyjścia
+	return value
+
+
+def getStartPosition(maze):
+	for i in range(len(maze)):
+			for j in range(len(maze[i])):
+				if maze[i][j] == 5:
+					startX = j
+					startY = i
+					break
+	return startX, startY
+
+
+if __name__ == '__main__':
+	try:
+		t = sys.stdin.readline().split()[0]
+		maze = [[int(i) for i in line if i != '\n' and i != '\r'] for line in sys.stdin.readlines()]
+		startTime = time.time()
+		basicSolution = findWay(t, maze)
+		firstTime = time.time() - startTime
+		secondTime = float(t) - firstTime
+		if secondTime <= 0:
+			# pierwsza część zajęła za duzo czasu
+			print(len(basicSolution))
+			print(basicSolution, file=sys.stderr)
+		else:
+			# poprawić rozwiąznie na minimalne
+			minSolution = optimize(basicSolution, secondTime, maze)
+			print(len(minSolution))
+			print(minSolution, file=sys.stderr)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)
