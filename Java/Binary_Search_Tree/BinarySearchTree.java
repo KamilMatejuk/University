@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 import java.io.Serializable;
 
 public class BinarySearchTree<T> implements Serializable {
@@ -10,10 +11,6 @@ public class BinarySearchTree<T> implements Serializable {
     public BinarySearchTree(){
         root = null;
     }
-
-    //nwm czy to dziala
-    //https://www.youtube.com/watch?v=OgJL8eh87PI
-    //http://cs.pwr.edu.pl/macyna/wyklad10W.pdf
 
     /**
      * Wstawienie do drzewa nowego węzła o wartości value
