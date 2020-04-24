@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public abstract class SelectAlgorythm {
 
     int[] array;
