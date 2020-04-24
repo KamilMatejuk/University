@@ -1,0 +1,87 @@
+﻿/ Prime NUmbers From Given Range
+/ by Kamil Matejuk
+
+        INPUT
+        Store       startX
+        INPUT
+        Store  		endX
+        Add 		ONE
+        Store       endX
+        
+        JnS         WriteTwo
+        Clear
+        Add         startX
+        Store       CounterExt
+CondExt,Load        CounterExt  /zewn petla po liczbach z zakresu
+        subt        endX
+        Skipcond    000
+        Jump        End
+        
+		Clear
+		Add 		TWO
+        Store       CounterInt
+CondInt,Load 		CounterInt	/wewn petla po dzielnikach
+        SUBT        CounterExt
+        SKIPCOND    000
+        JUMP        EndInt
+
+        JnS         DevideXbyCount
+        LOAD        tempX   /0 jezeli sie dzieli, >0 jezeli nie
+        Skipcond    800
+        Jump        EndInt /jezeli znajdzie sie 0 to konczy
+        JnS			show
+        
+        LOAD        CounterInt
+        ADD         ONE
+        STORE       CounterInt
+        JUMP        CondInt
+        
+EndInt, Load        CounterExt
+        Add         ONE
+        Store       CounterExt
+        Jump        CondExt
+
+End,    HALT
+
+/VARIABLES
+startX, DEC 0; /poczatek zakresu
+endX, DEC 0; /koniec zakresu
+tempX, DEC 0 /tymcasowa zmienna do zmniejszania X
+CounterInt,  DEC 2 /licznik dzielnikow danej liczby [2 - (x-1)]
+CounterExt, DEC 0 /Licznik liczb z zakresu [startX - endX]
+ONE, DEC 1
+TWO, DEC 2
+THREE, DEC 3
+
+/SUBROUTNES
+DevideXbyCount, HEX 000     /storing return address
+                Clear
+                Store tempX
+                Add CounterExt
+loop,           Store tempX
+                Subt CounterInt
+                Skipcond 000
+                Jump loop
+                JumpI DevideXbyCount
+                
+WriteTwo,   HEX 000
+            Load    startX
+            Subt    THREE
+            Skipcond 000
+            JumpI   WriteTwo
+            Load    TWO
+            Output
+            JumpI WriteTwo
+            
+show,	HEX 000
+		Clear
+		Load CounterInt
+		Subt CounterExt
+		Add ONE
+        Skipcond 400
+        JumpI	show
+		Load CounterExt
+		Output
+		JumpI show
+
+
