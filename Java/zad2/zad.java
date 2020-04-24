@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -6,7 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class zad2 {
+public class zad {
 
     public static boolean GENERATE_STATS = true;
 
