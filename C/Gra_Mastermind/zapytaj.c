@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 #include "funs.h"
 #include <stdio.h>
 #include <stdlib.h>
