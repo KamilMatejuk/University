@@ -1,5 +1,5 @@
+/* Kamil Matejuk */
 import com.sun.source.tree.Tree;
-
 import java.io.Serializable;
 
 public class TreeNode<T> implements Comparable<T>, Serializable {
