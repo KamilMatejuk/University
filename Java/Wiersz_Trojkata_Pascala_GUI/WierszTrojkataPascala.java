@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public class WierszTrojkataPascala {
     long[] wiersz;
 
