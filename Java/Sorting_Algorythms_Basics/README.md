@@ -7,7 +7,7 @@ ilości porównań oraz ilości zamian dla k prób.
 ### kompilacja:
 	javac *.java
 ### uruchamianie:
-	java zad4 --type insert|merge|quick|dualpivot|hybrid --comp '<='|'>=' --stat|--smallstat|--stringstat|--stringsmallstat filename.txt k
+	java zad --type insert|merge|quick|dualpivot|hybrid --comp '<='|'>=' --stat|--smallstat|--stringstat|--stringsmallstat filename.txt k
 gdzie: </br>
 	--stat generuje statystyki dla liczb całkowitych i n: {100, 200, ... 1000} </br>
 	--smallstat generuje statystyki dla liczb całkowitych i n: {2, 3, 4, ... 100} </br>
