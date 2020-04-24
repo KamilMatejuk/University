@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 #include "agents.h"
 
 void south(struct agent *a)
