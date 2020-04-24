@@ -10,4 +10,4 @@ Celem naszym jest napisanie programu, który będzie łamał ukryty kod (grał j
 Zamiast kolorów używać będziemy cyfr od 1 do 6. 
 Zakładamy, że osoba uruchamiająca program jest koderem i zapisała sobie na kartce kod złożony z czterech cyfr.
 Program cyklicznie drukuje swoją propozycję kodu (cztery cyfry z zakresu od 1 do 6) i czeka na wprowadzenie 
-przez kodera liczbę białych i liczbę czarnych kołeczków. */
+przez kodera liczbę białych i liczbę czarnych kołeczków.
