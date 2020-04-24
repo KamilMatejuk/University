@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public class InsertionSort extends Sorter {
 
     InsertionSort(String comp) {
