@@ -7,6 +7,6 @@ pozwala na wygenerowanie pliku ze statystyką czasu, ilości porównań, ilości
     javac *.java
 ### uruchamianie:
     java zad --type insert|merge|quick|radix --comp '<='|'>=' --stat filename.txt k
-###uwaga: 
+### uwaga: 
 * sortowanie działa tylko dla liczb całkowitych.
 * ze względu na działanie Garbage Collectora pomiary zużytej pamięci są niedokładne, a czasem mogą wyjść ujemne.
