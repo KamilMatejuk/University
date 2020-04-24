@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
@@ -13,8 +14,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @version 1.0
  */
 public class Rabbit extends Thread{
-    //TODO samozjadające sie króliki
-
     public int cord_x; //wspolrzedna X lewego-górnego rogu
     public int cord_y; //wspolrzedna Y lewego-górnego rogu
     public int size;
