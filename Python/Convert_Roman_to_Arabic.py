@@ -1,3 +1,7 @@
+# Kamil Matejuk
+
+# Napisz program konwertujący liczby rzymskie na arabskie
+
 def convert(roman):
     # letters = [wartosc litery w alfabecie arabskim, ilosc wystapien]
     letters = [[romanSwitch(roman[0]), 1]]
