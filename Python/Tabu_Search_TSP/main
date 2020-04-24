@@ -1,4 +1,6 @@
 #!/usr/bin/python
+
+# Kamil Matejuk
 import sys
 from functools import reduce
 import time
