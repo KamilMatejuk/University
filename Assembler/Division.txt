@@ -1,0 +1,43 @@
+﻿/ Division with residual Calculator
+/ by Kamil Matejuk
+
+/ Read inputs
+INPUT
+Store X
+INPUT
+Store Y
+
+/ Clear num
+Load num
+Subt num
+Store num
+
+/ Check if greater then zero (don't take into consideration negative divisions)
+Load Y
+Skipcond 800
+    /Skipcond 800 if AC > 0,
+/Skipcond 400 if AC = 0,
+/Skipcond 000 if AC < 0
+Jump endif
+       
+/ Loop for performing iterative substraction
+loop, Load num
+        Add one
+        Store num
+         
+        Load X
+        Subt Y
+        Store X
+
+        Skipcond 000
+        Jump loop
+
+endif, Load num
+Subt one
+Output / Output result to user
+Halt
+
+X, DEC 0
+Y, DEC 0
+num, DEC 0
+one, DEC 1
