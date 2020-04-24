@@ -16,7 +16,8 @@ Między cyframi nie będzie spacji. Możliwe cyfry:
 * 5 – symbol agenta, oznaczający jego pozycję początkową (Uwaga: nie ma konieczności wizualizacji kolejnych kroków)
 * 8 – symbol wyjścia, oznaczający pozycję celu, na który agent powinien dotrzeć (Uwaga: jest dokładnie jeden symbol 8 oraz znajduje się on na obrzeżu)
 #####
-Wczytywane poprzez ./main <input1 | <input2
+Wczytywane poprzez:</br>
+./main <input1 | <input2
 
 ## Out: 
 Na standardowym wyjściu znaleźć się powinna jedynie łączna liczba kroków k od pozycji startowej do celu, wykonana w wybranym rozwiązaniu.
