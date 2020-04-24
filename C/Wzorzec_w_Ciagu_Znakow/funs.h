@@ -1,4 +1,5 @@
 //funs.h
+/* Kamil Matejuk */
 #include <stdbool.h>
 
 struct wynik_match {
