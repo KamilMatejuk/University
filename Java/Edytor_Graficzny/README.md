@@ -7,6 +7,6 @@ dwóch trybach:</br>
     Figure można oznaczyż jako aktywną. Wówczas powinno się dać: przesunąć ją w inne miejsce, lub powiekszyć.
     Dodatkowo pod prawym przyciskiem myszy powinno sie pojawić menu umozliwiające zmianę koloru wypełnienia figury.
 #####
-Aplikacja powinna by¢ wyposażona w przycisk Info wyświetlający okienko dialogowe z informacjami o programie
+Aplikacja powinna być wyposażona w przycisk Info wyświetlający okienko dialogowe z informacjami o programie
 (nazwa, przeznaczenie, autor, ...).
 Aplikacja powinna umożliwić zapisanie tego co jest na ekranie do pliku i wczytanie figur z istniejącego pliku
