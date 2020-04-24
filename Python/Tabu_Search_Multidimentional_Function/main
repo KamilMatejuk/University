@@ -1,4 +1,6 @@
 #!/usr/bin/python
+
+# Kamil Matejuk
 import sys
 import math
 from functools import reduce
