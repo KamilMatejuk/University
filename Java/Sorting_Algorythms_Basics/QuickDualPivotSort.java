@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public class QuickDualPivotSort extends Sorter {
 
     QuickDualPivotSort(String comp) {
