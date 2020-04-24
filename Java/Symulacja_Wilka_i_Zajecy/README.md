@@ -12,7 +12,7 @@ Napisz korzystając z wątków następującą symulację:
 * Czas dziaaania jednego cyklu wątku jest równy w przybliżeniu losowo wybranej liczbie milisekund
     z przedziału [0.5k, 1.5k], gdzie k jest parametrem programu.
 #####
-Pisząc symulację zapewnij takie opó1nienia ruchów (parametr k), aby ruch zwierząt był w miarę płynny. Zapewnij też
+Pisząc symulację zapewnij takie opóźnienia ruchów (parametr k), aby ruch zwierząt był w miarę płynny. Zapewnij też
 łatwe rozróżnienie między wilkiem a zającami na planszy. Liczba zajęcy, opóźnienie oraz rozmiar planszy powinny być
 także podane jako parametry.</br>
 Początkowe położenie zwierząt powinno być losowe. 
