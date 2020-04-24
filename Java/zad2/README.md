@@ -14,3 +14,10 @@ liczbę porównań oraz przestawień elementów.
 #####
 Wynikiem, wyświetlanym na standardowym wyjściu, działania algorytmu jest tablica z zaznaczoną k-tą statystyką pozycyjną np.:</br>
 1 2 [3] 4 6 8 7 5
+
+### kompilacja:
+	javac *.java
+### uruchamianie:
+	java zad2 -r | -p | -check
+gdzie dla -r, -p zgodnie z poleceniem następuje wczytanie danych n,k z klawiatury. Natomiast po uruchomieniu z flagą -check wykonywany jest test, powtarzający wywołanie algorytmu Select 100 razy dla tych samych danych wejsciowych (n=1000, 1<=k<=n), by wyliczyć minimalną i maksymalną liczby porównań dla obu algorytmów, oraz średnią i odchylenie standardowe.
+
