@@ -35,3 +35,5 @@ dwadzieścia, dziesięć, pięć, dwa i jeden bajtalar. Oczywiście bank dysponu
 każdego z tych nominałów (złośliwi mówią, że w każdej chwili może sobie dodrukować). Wypłacając 
 pieniądze Bajtazar kierował się bardzo prostą zasadą: za każdym razem wybierał banknot o 
 największym nominale nie przekraczającym kwoty, która pozostała do wydania.
+
+### Dla każdego z zadań polecenie jest minimalnie inne
