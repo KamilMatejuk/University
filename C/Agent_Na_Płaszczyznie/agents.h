@@ -1,5 +1,7 @@
 //funs.h
 
+/* Kamil Matejuk */
+
 struct agent{
     int x;
     int y;
