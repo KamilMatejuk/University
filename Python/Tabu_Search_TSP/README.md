@@ -8,7 +8,7 @@ Dane wejściowe składać się będą z n+ 1 linii. W pierwszej linii będą umi
  odległości pomiędzy miastami oddzielone co najmniej jedną spacją. Uwaga, odległość z miasta i do miasta i zawsze wynosi 0, 
  natomiast nie należy zakładać, że mamy zadany problem Metric TSP, ani że odległości między wybranymi dwoma miastami są 
  takie same w obu kierunkach.</br>
-Wczytywane poprzez ./main <input1 | <input2
+Wczytywane poprzez: `./main <input1 | <input2`
 
 ## Out: 
-Na standardowym wyjściu znaleźć się powinien jedynie koszt pokonania cyklu. Ostatnią linią na standardowym wyjściu błędów powinien być (n + 1)-elementowy ciąg liczb całkowitych oddzielonych spacjami, oznaczający kolejno odwiedzane miasta, np. 1 5 4 3 2 6 1
+Na standardowym wyjściu znaleźć się powinien jedynie koszt pokonania cyklu. Ostatnią linią na standardowym wyjściu błędów powinien być (n + 1)-elementowy ciąg liczb całkowitych oddzielonych spacjami, oznaczający kolejno odwiedzane miasta, np. </br> 1 5 4 3 2 6 1
