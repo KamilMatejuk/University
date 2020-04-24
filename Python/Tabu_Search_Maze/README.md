@@ -10,11 +10,12 @@ Dane wejściowe składać się będą z n+ 1 linii. W pierwszej linii będą umi
 czasu, jak w zadaniu 1, natomiast n i m oznaczają wymiary kraty (odpowiednio liczba wierszy i kolumn w labiryncie, który będzie chciał opuścić
 agent). W kolejnych n liniach będą znajdowały się cyfry tworzące labirynt.
 </br>
-Między cyframi nie będzie spacji. Możliwe cyfry:</br>
-0 – standardowe, puste pole, po którym agent może się poruszać</br>
-1 – ściana, która nie może zostać pokonana (Uwaga: ściany będą znajdować się jedynie na obrzeżach, nie będzie ścian wewnątrz labiryntu)</br>
-5 – symbol agenta, oznaczający jego pozycję początkową (Uwaga: nie ma konieczności wizualizacji kolejnych kroków)</br>
-8 – symbol wyjścia, oznaczający pozycję celu, na który agent powinien dotrzeć (Uwaga: jest dokładnie jeden symbol 8 oraz znajduje się on na obrzeżu)</br>
+Między cyframi nie będzie spacji. Możliwe cyfry:
+* 0 – standardowe, puste pole, po którym agent może się poruszać
+* 1 – ściana, która nie może zostać pokonana (Uwaga: ściany będą znajdować się jedynie na obrzeżach, nie będzie ścian wewnątrz labiryntu)
+* 5 – symbol agenta, oznaczający jego pozycję początkową (Uwaga: nie ma konieczności wizualizacji kolejnych kroków)
+* 8 – symbol wyjścia, oznaczający pozycję celu, na który agent powinien dotrzeć (Uwaga: jest dokładnie jeden symbol 8 oraz znajduje się on na obrzeżu)
+#####
 Wczytywane poprzez ./main <input1 | <input2
 
 ## Out: 
