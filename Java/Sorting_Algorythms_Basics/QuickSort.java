@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public class QuickSort extends Sorter {
 
     QuickSort(String comp) {
