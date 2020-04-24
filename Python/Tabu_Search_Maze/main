@@ -1,11 +1,10 @@
 #!/usr/bin/python
+
+# Kamil Matejuk
 import sys
 import time
 import random
 
-
-##################################################################################################
-### poprawa znalezionej sekwencji do optymalnej
 def optimize(solution, t, maze):
 	solution = [i for i in solution]
 	while solution.count('U') > 0 and solution.count('D'):
@@ -16,9 +15,6 @@ def optimize(solution, t, maze):
 		solution.remove('R')
 	return ''.join(solution)
 
-
-##################################################################################################
-### znalezienie jakoegokolwiek połączenia do wyjścia
 def findWay(t, maze):
 	final = False
 	sequence = ''
