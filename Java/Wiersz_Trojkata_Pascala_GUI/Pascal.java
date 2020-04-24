@@ -3,10 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/* Napisz proste GUI dla klasy WierszTrójkataPascala. Powinno ono działać w ten sposób, że podajemy liczbę będącą rozmiarem
-trójkąta Pascala i wyświetlamy cały uzyskany trójkąt. Zadbaj o pełną obsługę okna aplikacji, odpowiednią kolorystykę i
-rozmiar czcionki, oraz pełną obsaugę wszystkich wyjątków. */
-
 public class Pascal {
 
     public static void centerWindow(Window frame) {
