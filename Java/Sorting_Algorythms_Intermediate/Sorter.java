@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public abstract class Sorter {
 
     int[] array;
