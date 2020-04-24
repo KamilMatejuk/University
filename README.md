@@ -7,3 +7,6 @@ Here can be seen exaples of tasks using:
 * Assembler
 * MySQL
 * MongoDB
+
+Below are links to projects I took part in, but are hosted somewhere else:
+* [GO Game](https://github.com/Skazmen/ProjektTP)
