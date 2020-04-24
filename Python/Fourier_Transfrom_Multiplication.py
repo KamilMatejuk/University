@@ -1,3 +1,4 @@
+# Kamil Matejuk
 from cmath import exp
 import math
 import random
@@ -5,7 +6,10 @@ import numpy as np
 import time
 import multiprocessing 
 
-
+# Zaimplementuj mnożenie dużych liczb z wykorzystanie Transformaty Fouriera na trzy sposby:
+# *** wykorzystując podany algorytm
+# *** wykorzystując swój własny algorytm
+# *** wykorzystując numpy.fft
 
 class FastBigNum1:
 	# z wykorzystaniem kodów ze polecenia
