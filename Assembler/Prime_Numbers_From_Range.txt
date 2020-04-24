@@ -1,4 +1,4 @@
-﻿/ Prime NUmbers From Given Range
+﻿/ Prime Numbers From Given Range
 / by Kamil Matejuk
 
         INPUT
