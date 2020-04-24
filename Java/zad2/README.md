@@ -1,0 +1,16 @@
+# Polecenie
+Zaimplementuj podane algorytmy: RANDOMIZED SELECT, SELECT.
+Program przyjmuje jeden z dwóch parametrów wejsciowych:
+* wywołanie ./main -r oznacza operowanie na danych losowych długości n,
+* wywołanie ./main -p oznacza operowanie na losowej permutacji zbioru {1, 2, ... , n}.
+#####
+Po uruchomieniu, program wczytuje ze standardowego wejscia dwie liczby całkowite:
+* n — długość danych
+* 1 ≤ k ≤ n — numer szukanej statystyki pozycyjnej, a następnie generuje tablicę danych (zaleznie od parametru uruchomienia) i sekwencyjnie
+uruchamia zaimplementowane algorytmy na wygenerowanych danych. W czasie wykonywania algorytmów SELECT, RANDOMIZED SELECT, na standardowym 
+wyjsciu błędów, powinien być wypisywany log, tak by można było działanie algorytmu odtworzyć. W szczególności powinien zawierać
+on tablicę danych, k, kolejno wybierane pivoty, wykonywane porównania i przestawienia oraz podsumowanie zawierające
+liczbę porównań oraz przestawień elementów.
+#####
+Wynikiem, wyświetlanym na standardowym wyjściu, działania algorytmu jest tablica z zaznaczoną k-tą statystyką pozycyjną np.:</br>
+1 2 [3] 4 6 8 7 5
