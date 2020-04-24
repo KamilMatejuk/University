@@ -1,0 +1,1 @@
+SELECT species, count(*) from pet GROUP BY species;

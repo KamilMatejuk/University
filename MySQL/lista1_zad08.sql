@@ -1,0 +1,1 @@
+SELECT owner,name,death FROM pet WHERE death IS NULL;

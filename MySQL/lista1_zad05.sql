@@ -1,0 +1,1 @@
+SELECT DISTINCT species FROM pet WHERE sex='m';

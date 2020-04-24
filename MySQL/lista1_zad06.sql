@@ -1,0 +1,1 @@
+SELECT name FROM event WHERE type = 'birthday';

@@ -1,0 +1,1 @@
+SELECT owner FROM pet GROUP BY owner HAVING count(*)>1;
