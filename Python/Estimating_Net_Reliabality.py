@@ -2,6 +2,8 @@
 import random
 import time
 
+# Napisz program szacujący niezawodność sieci
+
 # G - graf spójny (|V|=n, E)
 # N - macierz n*n natężeń strumienia pakietów (ilość pakietów przesłanych w ciagu sekundy i->j)
 # c(krawędź) - funkcja przepustowości (max liczba bitów którą można wprowadzić w ciągu sekundy)
