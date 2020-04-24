@@ -10,17 +10,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-/* Napisz szablon klasy implementującej binarne drzewo przeszukiwań. Szablon powinien implementować następujące operacje:
-przeszukiwanie (search),
-wstawianie (insert),
-usuwanie (delete) elementów,
-wyświetlenie (draw) całego drzewa.
-
-Szablony powinny tworzyć i obsaugiwać drzewa przynajmniej dla typów: Integer, Double oraz String.
-
-Zadanie ma działać w technologii klient-serwer. Klient powinien być okienkową aplikacją, która umożliwia wysyłanie
-odpowiednich zapytań do serwera i wyświetlać otrzymaną odpowiedź */
-
 public class Client extends Frame implements ActionListener {
 
     static Client frame;
