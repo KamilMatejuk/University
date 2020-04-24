@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 public class MergeSort extends Sorter {
 
     MergeSort(String comp) {
