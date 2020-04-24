@@ -1,3 +1,4 @@
+/* Kamil Matejuk */
 import java.util.Arrays;
 
 public class Select extends SelectAlgorythm {
