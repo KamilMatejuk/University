@@ -4,3 +4,4 @@ Codes are from different parts of studying, from fresh-year 2018 till today, so 
 
 Below are links to projects I took part in, but are hosted somewhere else:
 * [GO Game](https://github.com/Skazmen/ProjektTP)
+* [Twitter generator](https://github.com/Reclocco/PYTON-SUPER-PROJEKT)
