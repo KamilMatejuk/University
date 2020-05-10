@@ -39,8 +39,8 @@ koncowa liczba elementów w strukturze.
 ## Przykładowe wywołanie
 `./main --type rbt <./input >out.res`</br>
 input</br>
-`17</br>
-max
+`17\
+max  
 insert aaa
 insert a
 insert b
