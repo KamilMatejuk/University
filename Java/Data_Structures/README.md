@@ -37,9 +37,9 @@ maksymalna liczba elementów (maksymalne zapełnienie struktury w czasie działa
 koncowa liczba elementów w strukturze.
 
 ## Przykładowe wywołanie
-`./main --type rbt <./input >out.res`
-input
-`17
+`./main --type rbt <./input >out.res`</br>
+input</br>
+`17</br>
 max
 insert aaa
 insert a
