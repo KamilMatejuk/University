@@ -41,9 +41,12 @@ maksymalna liczba elementów (maksymalne zapełnienie struktury w czasie działa
 koncowa liczba elementów w strukturze.
 
 ## Przykładowe wywołanie
-`./main --type rbt <./input >out.res`</br>
+```
+java main --type rbt <./input >out.res 2>err
+```
 **input**
-```17
+```
+17
 max  
 insert aaa
 insert a
@@ -64,11 +67,26 @@ min
 ```
 
 **out.res**
-```a aaa ab b
+```
+a aaa ab b
 ab
 1
 1
 1
 0
 aaa
+```
+
+**err**
+```
+Czas działania:         89ms
+Ilość wykonania operacji 'insert':      59
+Ilość wykonania operacji 'delete':      4
+Ilość wykonania operacji 'find':        4
+Ilość wykonania operacji 'min':         1
+Ilość wykonania operacji 'max':         1
+Ilość wykonania operacji 'succesor':    0
+Ilość wykonania operacji 'inorder':     0
+Maksymalne zapełnienie struktury:       56
+Finalne zapełnienie struktury:          54
 ```
