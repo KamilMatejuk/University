@@ -24,6 +24,10 @@ k, k nie ma następników, struktura nie zachowuje porządku), pusta linię
 * inorder - wypisz elementy drzewa w posortowanej kolejnosci (od elementu najmniejszego do
 największego) lub, dla struktur pustych oraz nie zachowujących porządku (np. hmap), pustą linię
 
+## Dodatkowe Funkcjonalności
+* show - pozwala na wizualizację struktury w celach debugowania oraz śledzenia zmian
+* exit - pozwala opuścić program przed wczytaniem wszystkich komend
+
 ## Wejście
 Wejscie składa się z n+1 linii. W pierwszej, znajduje się liczba n okreslająca liczbę wykonywanych operacji, 
 w liniach 2 do (n+1) znajdują się kolejne operacje zgodnie z ich specyfikacją.
