@@ -1,9 +1,9 @@
 # Polecenie
 Napisz program, który symuluje działanie wybranych struktur danych przechowujących ciągi znaków.
 Program powinien przyjmowac jako parametr wejściowy typ struktury:
-* --type bst drzewo BST,
-* --type rbt drzewo czerwono–czarne,
-* --type hmap tablice hashujące z metodą łancuchów, a dla przechowywanych w jednej komórce danych długosci mniejszej 
+* **--type bst** drzewo BST,
+* **--type rbt** drzewo czerwono–czarne,
+* **--type hmap** tablice hashujące z metodą łancuchów, a dla przechowywanych w jednej komórce danych długosci mniejszej 
 niż n_t oraz z wykorzystaniem samoorganizujących się drzew binarnych (np. drzew czerwono–czarnych) dla przechowywanych 
 w jednej komórce danych o długosci większej niż n_t.
 
@@ -38,8 +38,8 @@ koncowa liczba elementów w strukturze.
 
 ## Przykładowe wywołanie
 `./main --type rbt <./input >out.res`</br>
-input</br>
-```17</br>
+**input**
+```17
 max  
 insert aaa
 insert a
@@ -56,13 +56,15 @@ find three
 find Three
 delete Three
 find Three
-min```
+min
+```
 
-out.res
-`a aaa ab b
+**out.res**
+```a aaa ab b
 ab
 1
 1
 1
 0
-aaa`
+aaa
+```
