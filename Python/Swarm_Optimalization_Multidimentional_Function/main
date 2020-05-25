@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+# Kamil Matejuk
+
+import sys
+from PSO import main
+
+
+def getFunction(epsilons):
+	def f(x):
+		assert len(x) == len(epsilons)
+		suma = 0
+		for i in range(0, len(x)):
+			suma += epsilons[i] * (abs(x[i])**(i+1))
+		return suma
+	return f
+
+
+if __name__ == '__main__':
+	try:
+		data = []
+		for line in sys.stdin:
+			data += line.split()
+		t = int(data[0])
+		startingX = [int(x) for x in data[1:6]]
+		epsilons = [float(x) for x in data[6:11]]
+		function = getFunction(epsilons)
+		main(t, startingX, function)
+
+	except IndexError:
+		print("Wrong number of input arguments", file=sys.stderr)
+	except ValueError:
+		print("Not integer/float arguments", file=sys.stderr)
