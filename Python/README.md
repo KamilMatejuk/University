@@ -12,7 +12,7 @@
 * [Estimating_Net_Reliabality](#Estimating_Net_Reliabality)
 * [Find_Repeting_Files](#Find_Repeting_Files)
 * [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication)
-* [Function_Approximation](#Function_Approximation)
+* [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
 * [Lowercase_Files_Names](#Lowercase_Files_Names)
 * [Pascal_Triangle](#Pascal_Triangle)
 * [RSA_Encryption_Decryption](#RSA_Encryption_Decryption)
@@ -58,13 +58,13 @@ Find and print duplicated files in given folder and subfolders. Two files are co
 ### Fourier_Transfrom_Multiplication
 Multiplication of big integers using Fourier Transform and three different algorithms (given by profesor, my own, numpy.fft).
 
-### Function_Approximation
+### Neural_Network_Function_Approximation
 A neural network implemented using `Keras`, trained to approximate functions quadratic and sinusoids, but the model I created is easily adapted to any function. Model uses three layers with structure 1-10-10-1, and usual training takes 5000 epochs. After the training the program generates an animation of learning.
 ![Nwural Network learning preview](imgs/neural-network.gif)
 I used Jupyter Notebook so a lot of comments are inside, but it not always displays correctly on github.
 **run:**<br/>
 ```
-jupyter notebook Function_Approximation.ipynb
+jupyter notebook Neural_Network_Function_Approximation.ipynb
 ```
 
 ### Lowercase_Files_Names
