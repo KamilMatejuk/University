@@ -2,10 +2,6 @@
 #include <iostream>
 using namespace std;
 
-/* Małym Symbolem Newtona nazywamy (autorzy zadania - to nie jest określenie uznane w świecie matematyki) 
-symbol Newtona ("n po k") dla n i k z przedziału od 0 do 10. 
-Napisz program obliczjący MSN. */
-
 int main()
 {
     int n,k;

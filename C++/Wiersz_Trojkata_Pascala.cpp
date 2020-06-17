@@ -2,15 +2,6 @@
 #include <iostream>
 using namespace std;
 
-/* Stwórz publiczną klasę WierszTrojkataPascala posiadającą jeden konstruktor
-WierszTrojkataPascala(int n), który tworzy tablicę liczb odpowiedniego rozmiaru i oblicza 
-w niej n-ty wiersz trójkąta Pascala. 
-Następnie zaimplementuj publiczną metodę wspolczynnik(int m) zwracającą wartość m-tego 
-elementu wiersza trójkąta Pascala. Funkcja ta powinna prawidaowo dziaaa¢ dla liczb od 0 do n.
-
-Dodaj odpowiednie własne wyjątki dla tej klasy, np. w przypadku użycia liczb ujemnych czy
-większych od argumentu konstruktora. */
-
 class WierszTrojkataPascala {
     public: int max;
     public: long wiersz[100];

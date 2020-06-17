@@ -6,21 +6,6 @@
 #include <vector>
 using namespace std;
 
-/* Program powinien liczy¢ pole i obwód następujących figur geometrycznych: okrąg, kwadrat, prostokąt, romb,
-pięciokąt foremny, sześciokąt foremny.
-
-Do tego celu należy stworzyć hierarchię obsaugujących poszczególne rodzaje figur. Korzeniem tej hierarchii powinna być
-abstrakcyjna klasa Figura, zawierająca abstrakcyjne metody do obliczania obwodu oraz pola danej figury. Po klasie
-Figura powinna dziedziczyć abstrakcyjna klasa Czworokat oraz klasy: Okrag, Pieciokat, Szesciokat. Po klasie Czworokat
-klasy: Kwadrat, Prostokat, Romb.
-Stwórz odpowiednie metody w klasach potomnych, które będą obliczały obwód i pole w sposób specyczny dla danej figury.
-W lini polece« można podać następujące rodzaje figur geometrycznych (o - okrąg, c-czworokąt, p-pięciokąt, s-sześciokąt)
-oraz ich parametry, przy czym: okrąg posiada jeden parametr: promień, czworokąt posiada pięć parametrów: bok1, bok2,
-bok3, bok4, kąt, pięciokąt i sze±ciokąt foremny: bok.
-Program powinien stworzyć obiekty dla tych figur, zapisać te obiekty w jednej tablicy, a następnie wypisać dla
-poszczególnych obiektów pole i obwód figury.
-
-Należy zadbać o odpowiednią obsługę błędów uwzględniając brakujące parametry, nieprawidłowe wartości kątów, itd. */
 
 class Figura {
     public: virtual void obwod()=0;
