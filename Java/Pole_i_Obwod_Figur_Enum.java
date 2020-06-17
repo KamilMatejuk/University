@@ -1,13 +1,6 @@
 /* Kamil Matejuk */
 import java.util.*;
 
-/* Przerobić Pole_i_Obwod_Figur.java w następujący sposób:
-• Należy stworzyć klasę Figury zawierającą dwie wewnętrzne klasy typu enum
-• Pierwsza klasa powinna zawierać elementy obsługujące figury z jednym parametrem (okrąg, kwadrat, pięciokąt, sze±ciokąt)
-• Druga klasa powinna zawiera¢ elementy obsługujące figury z dwoma parametrami (prostokąt, romb)
-• Z każdym elementem enum powinny być związane metody ObliczPole oraz ObliczObwod. Metody te powinny być specyczne dla
-    poszczególnych typów figur. */
-
 /*Pierwsza klasa powinna zawierać elementy obsługujące figury z jednym parametrem
 (kolo, kwadrat, pięciokąt foremny, sze±ciokąt foremny)*/
 enum OneParameter{
