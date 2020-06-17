@@ -2,8 +2,6 @@
 
 # Kamil Matejuk
 
-# Napisz skrypt reagujący na zmiany na podanej stronie i wyświetlający komuniakt w wypadku zmiany kontentu.
-
 url=$1
 time=$2
 

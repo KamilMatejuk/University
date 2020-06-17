@@ -2,14 +2,6 @@
 
 # Kamil Matejuk
 
-# Napisz program wypisujący:
-#	* prędkość przesyłania danych
-#	* czas od jakiego system jest uruchomiony
-#	* ilość energii w baterii (%)
-#	* średnie obciążenie procesora w ciągu ostatnich 1/5/15 min
-# oraz rysujący wykres przesyłania danych
-
-
 #aktulna predkosc przsylania danych
 _loadSpeed() {
 	bytes_in_new=$(awk "/^ *wlp3s0:/"' { print $2 }' /proc/net/dev)

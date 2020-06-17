@@ -2,8 +2,6 @@
 
 # Kamil Matejuk
 
-# Napisz grę w Ping - Ponga
-
 countdown() {
 	local count[0]=" XXX "
 	local count[1]="X   X"

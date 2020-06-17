@@ -2,7 +2,6 @@
 
 # Kamil Matejuk
 
-# Napisz skrypt wyświetlający dane na temat każdego z aktualnie działających procesów
 #(http://man7.org/linux/man-pages/man5/proc.5.html)
 
 printf "%6s | %6s | %30s | %15s | %5s \n\n" "PID" "PPID" "Name" "State" "opened files"
