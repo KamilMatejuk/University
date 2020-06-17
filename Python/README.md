@@ -60,7 +60,12 @@ Multiplication of big integers using Fourier Transform and three different algor
 
 ### Function_Approximation
 A neural network implemented using `Keras`, trained to approximate functions quadratic and sinusoids, but the model I created is easily adapted to any function. Model uses three layers with structure 1-10-10-1, and usual training takes 5000 epochs. After the training the program generates an animation of learning.
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/vt5fpE0bzSY)
+![Nwural Network learning preview](imgs/neural-network.gif)
+I used Jupyter Notebook so a lot of comments are inside, but it not always displays correctly on github.
+**run:**<br/>
+```
+jupyter notebook Function_Approximation.ipynb
+```
 
 ### Lowercase_Files_Names
 Algorithm changing all files name to lowercase in given directory and below.
