@@ -12,7 +12,7 @@ Scripts run and working on Linux Ubuntu 18.04
 
 ## Topics
 ### Check_IPS
-More info in [folder](CheckIps).
+More info in [folder](Check_IPs).
 
 ### Image_to_ANSI
 Script to download a photo of kitten from [API](https://api.thecatapi.com/v1/images/search) and display it in console using img2txt. Additionally, it displays a random Chuck Norris quote downloaded from [API](http://api.icndb.com/jokes/random).
