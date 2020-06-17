@@ -2,14 +2,18 @@
 Scripts run and working on Linux Ubuntu 18.04
 
 ## Contents
-*[Image_to_ANSI](Image_to_ANSI)
-*[Lowercase_Files_Names](Lowercase_Files_Names)
-*[Ping_Pong](Ping_Pong)
-*[Processes](Processes)
-*[Site_Checker](Site_Checker)
-*[System_Stats](System_Stats)
+* [Check_IPs](Check_IPs)
+* [Image_to_ANSI](Image_to_ANSI)
+* [Lowercase_Files_Names](Lowercase_Files_Names)
+* [Ping_Pong](Ping_Pong)
+* [Processes](Processes)
+* [Site_Checker](Site_Checker)
+* [System_Stats](System_Stats)
 
 ## Topics
+### Check_IPs
+More info inside [folder](/Check_IPs).
+
 ### Image_to_ANSI
 Script to download a photo of kitten from [API](https://api.thecatapi.com/v1/images/search) and display it in console using img2txt. Additionally, it displays a random Chuck Norris quote downloaded from [API](http://api.icndb.com/jokes/random).
 
