@@ -12,8 +12,10 @@
 * [Estimating_Net_Reliabality](#Estimating_Net_Reliabality)
 * [Find_Repeting_Files](#Find_Repeting_Files)
 * [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication)
+* [Neural_Network_XOR](#Neural_Network_XOR)
 * [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
 * [Lowercase_Files_Names](#Lowercase_Files_Names)
+* [Movie_Recomendation](#Movie_Recomendation)
 * [Pascal_Triangle](#Pascal_Triangle)
 * [RSA_Encryption_Decryption](#RSA_Encryption_Decryption)
 
@@ -58,6 +60,16 @@ Find and print duplicated files in given folder and subfolders. Two files are co
 ### Fourier_Transfrom_Multiplication
 Multiplication of big integers using Fourier Transform and three different algorithms (given by profesor, my own, numpy.fft).
 
+### Neural_Network_XOR
+Not using any neural network related module write from scratch a basic neural network. The purpose of which will be XOR function.
+```
+0 XOR 0 = 0
+0 XOR 1 = 1
+1 XOR 0 = 1
+1 XOR 1 = 0
+```
+The model used is in shape 3-4-1. Three input neurons contain two variables for XOR function and one bias.
+
 ### Neural_Network_Function_Approximation
 A neural network implemented using `Keras`, trained to approximate functions quadratic and sinusoids, but the model I created is easily adapted to any function. Model uses three layers with structure 1-10-10-1, and usual training takes 5000 epochs. After the training the program generates an animation of learning.
 ![Nwural Network learning preview](imgs/neural-network.gif)
@@ -69,6 +81,9 @@ jupyter notebook Neural_Network_Function_Approximation.ipynb
 
 ### Lowercase_Files_Names
 Algorithm changing all files name to lowercase in given directory and below.
+
+### Movie_Recomendation
+Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
 
 ### Pascal_Triangle
 A recurrent algorithm (optimized for time and memmory complexity) for creating pascal triangle.
