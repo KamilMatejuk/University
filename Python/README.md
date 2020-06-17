@@ -83,7 +83,7 @@ jupyter notebook Neural_Network_Function_Approximation.ipynb
 Algorithm changing all files name to lowercase in given directory and below.
 
 ### Movie_Recomendation
-Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
+Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. This set is quite big (`ml-latest.zip`, `265 MB`, `27 000 000` ratings, by `280 000` users on `58 000` movies). Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
 
 ### Pascal_Triangle
 A recurrent algorithm (optimized for time and memmory complexity) for creating pascal triangle.
