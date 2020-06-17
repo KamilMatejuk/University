@@ -2,8 +2,6 @@
 import sys
 import random
 
-# Zaimplementuj przeszukiwania: DepthFirstSearch, BreadthFirstsearch na losowo generowanym drzewie binarnym.
-
 class Node:
 	def __init__(self, value):
 		self.value = value

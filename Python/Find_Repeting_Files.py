@@ -3,7 +3,6 @@ import os
 import sys
 import hashlib
 
-# Znajdź i wypisz zduplikowane pliki w danym katalogu. Pliki rozumiane są jako identyczne, jeżeli mają taki sam rozmiar i wartość funckji haszującej
 
 def checkRepeating(basePath):
 	hashesAndSizes = []

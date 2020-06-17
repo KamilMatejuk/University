@@ -3,18 +3,6 @@ import sys
 import uuid
 import random
 
-# Napisz program ramkujący zgodnie z zasadą "rozpychania bitów", oraz weryfikujacy poprawność ramki metodą CRC.
-# Program ma odczytywać pewien źródłowy plik tekstowy 'Z' zawierający dowolny ciąg złożony ze znaków '0' i '1'
-# (symulujacy strumień bitów) i zapisywać ramkami odpowiednio sformatowany ciąg do inngo pliku tekstowego 'W'.
-# Program powinien obliczać i wstawiać do ramki pola kontrolne CRC - formatowane za pomocą ciągów złożonych ze
-# znaków '0' i '1'.
-# Napisz program, realizujacy procedure odwrotną, tzn. który odzczytuje plik wynikowy 'W' i dla poprawnych danych
-# CRC przepisuje jego zawartość do pliku 'X' tak, aby otrzymać kopię oryginalnego pliku źródłowego 'Z'.
-# wywołanie:
-#  * stworzenie ramek z danych z pliku 'Z' i wypisanie do pliku 'W'
-#       python Data_Framing.py --frame Z W
-#  * odcyztanie raemk z pliku 'W' i wypisanie zczytanych treści do pliku 'X'
-#       python Data_Framing.py --deframe W X
 
 maxSize = 150 * 8  # bitów
 maxDataSize = maxSize - 4 * 32

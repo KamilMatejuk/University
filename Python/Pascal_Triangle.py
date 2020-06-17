@@ -1,7 +1,6 @@
 # Kamil Matejuk
 import math
 
-# Rekurencyjny algorytm (wydojny czasowo i pamięciowo) tworzenia trójkąta Pascala.
 
 def pascalRow(above, n):
     margin = 4
