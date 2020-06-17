@@ -1,5 +1,5 @@
 # Polecenie
-Korzystając ze struktury zaimplementowanej w `Priority_Queue_using_Heap` zaimplementuj program realizujący algorytm Djikstry, dla podanego grafu skierowanegoo `G=(V, E)`, znajdujący najkrótsze ścieżki z wybranego wierzchołka `v ∈ V` do każdego `v ∈ V`.
+Korzystając ze struktury zaimplementowanej w `Priority_Queue_using_Heap` zaimplementuj program realizujący algorytm Djikstry, dla podanego grafu skierowanegoo `G=(V, E)`, znajdujący najkrótsze ścieżki z wybranego wierzchołka `v∈V` do każdego `v∈V`.
 
 ## Wejście
 Program nie powinien wymagaćzadnych parametrów uruchomienia. Po uruchomieniu programu, na standardowym wejsciu, podajemy definicję grafu `G` oraz wierzchołek startowy `v`. Kolejno wczytywane sąa:
