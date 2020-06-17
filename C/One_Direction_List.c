@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-/* Zaimplementuj jednokierunkowa liste. Dodaj do listy 1000 losowych elementów. Zmierz średni czas dostepu 
-do tego samego i losowego elementu. Wytłumacz róznice. Zaimplementuj funkcje megre(lista l1, lista l2) łączaca 2 listy. */
 
 struct OneDirectionList {
 	struct ListNode* first;

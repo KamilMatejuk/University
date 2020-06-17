@@ -1,8 +1,6 @@
 /* Kamil Matejuk */
 #include <stdio.h> 
 #include <stdlib.h>
-
-/* Polecenie: Zaimplementuj kolejk ̨e FIFO. */
   
 struct Queue { 
     int head; //stąd się zabiera elementy

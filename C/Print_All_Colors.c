@@ -1,7 +1,6 @@
 /* Kamil Matejuk */
 #include <stdio.h>
 
-/* Napisz program który wypisuje każdy możliwy kolor (w swoim kolorze) w dostępnym dla ciebie terminalu */
 
 int main(int argc, char* argv[]){
 	for(int i=0; i<256; i++){

@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-/* Zaimplementuj dwukierunkowa liste cykliczna. Dodaj do listy 1000 losowych elementów. Zmierz sredni czas 
-dostepu do tego samego i losowego elementu. Wytłumacz róznice. Zaimplementuj funkcje megre(lista l1, lista l2) łaczaca 2 listy. */
 
 struct TwoDirectionCyclicList {
 	struct ListNode* first;

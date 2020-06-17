@@ -1,12 +1,6 @@
 /* Kamil Matejuk */
 #include <stdio.h>
 
-/* Niech σ(n) oznacza sumę wszystkich dzielników liczby naturalnej n mniejszych
-od liczby n (na przykład σ(5) = 1 oraz σ(6) = 1+2+3 = 6). Liczbę n nazywamy
-doskonałą jeśli σ(n) = n. Parę liczb (n, m) nazywamy zaprzyjaźnioną, jeśli
-σ(n) = m oraz σ(m) = n.
-Napisz w C program znajdujący wszystkie liczby doskonałe mniejsze od 1000
-oraz wyznaczający wszystkie zaprzyjaźnione pary liczb mniejszych niż 1000. */
 
 int main()
 {

@@ -1,10 +1,6 @@
 /* Kamil Matejuk */
 #include <stdio.h>
 
-/* Napisz w C program, który czyta kwotę podaną w postaci całkowitej liczby
-złoty i całkowitej liczby groszy a następnie drukuje w jaki sposób wypłacić ją jak
-najmniejszą liczbą banknotów i monet. */
-
 int main()
 {
     int zl, gr, x;
