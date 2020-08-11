@@ -2,13 +2,13 @@
 Scripts run and working on Linux Ubuntu 18.04
 
 ## Contents
-* [Check_IPs](#Check_IPs)
-* [Image_to_ANSI](#Image_to_ANSI)
-* [Lowercase_Files_Names](#Lowercase_Files_Names)
-* [Ping_Pong](#Ping_Pong)
-* [Processes](#Processes)
-* [Site_Checker](#Site_Checker)
-* [System_Stats](#System_Stats)
+* `Natwork` [Check_IPs](#Check_IPs)
+* `Basic` [Image_to_ANSI](#Image_to_ANSI)
+* `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
+* `Game` [Ping_Pong](#Ping_Pong)
+* `Basic` [Processes](#Processes)
+* `Basic` [Site_Checker](#Site_Checker)
+* `Basic` [System_Stats](#System_Stats)
 
 ## Topics
 ### Check_IPS
