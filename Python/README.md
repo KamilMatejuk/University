@@ -38,14 +38,17 @@ More info in [folder](Tabu_Search_TSP).
 
 ### CSMA_CD_Ethernet_Simulation
 Simulate Ethernet way of medium access using [CSMA/CD](https://pl.wikipedia.org/wiki/CSMA/CD). The medium is simulated as an array, with propagating values both ways. Each machine sends their own signal (e.g. signal from machine `1` looks like this: 
-
-```...1111111111111111...```
-
+```
+...1111111111111111...
+```
 When a collision is detected, collisiion signal is progapated:
-
-```...cccccc...```, 
+```
+...cccccc...
+```
 and machines which collided send jamming signal: 
-```...jjjjjj...```.
+```
+...jjjjjj...
+```
 The program is a very simple approximation of ethernet connection, but shows the basic pronciples.
 
 ### Convert_Roman_to_Arabic
