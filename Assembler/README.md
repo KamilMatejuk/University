@@ -3,8 +3,8 @@ Basic Assembler-like programs, written for [marie.js](https://marie.js.org/)
 
 
 ## Contents
-* [Division](Division)
-* [Prime_Numbers_From_Range](Prime_Numbers_From_Range)
+* `Math` [Division](Division)
+* `Math` [Prime_Numbers_From_Range](Prime_Numbers_From_Range)
 
 ## Topics
 ### Division
