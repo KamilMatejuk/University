@@ -2,7 +2,7 @@
 * [`Metaheuristics` Simulated_Anneling_Maze](#Simulated_Anneling_Maze)
 * [[`Metaheuristics`] Simulated_Anneling_Metrices](#Simulated_Anneling_Metrices)
 * [`[Metaheuristics]` Simulated_Anneling_Multidimentional_Function](#Simulated_Anneling_Multidimentional_Function)
-* [[ML] Swarm_Optimalization_Multidimentional_Function](#Swarm_Optimalization_Multidimentional_Function)
+* `Metaheuristics` [Swarm_Optimalization_Multidimentional_Function](#Swarm_Optimalization_Multidimentional_Function)
 * [Tabu_Search_Maze](#Tabu_Search_Maze)
 * [Tabu_Search_Multidimentional_Function](#Tabu_Search_Multidimentional_Function)
 * [Tabu_Search_TSP](#Tabu_Search_TSP)
