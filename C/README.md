@@ -1,13 +1,13 @@
 ## Contents
-* [Agent_Na_Plaszczyznie](#Agent_Na_Plaszczyznie)
-* [Gra_Mastermind](#Gra_Mastermind)
-* [Wzorzec_w_Ciagu_Znakow](#Wzorzec_w_Ciagu_Znakow)
-* [Bankomat](#Bankomat)
-* [FIFO_Queue](#FIFO_Queue)
-* [Liczby_Doskonale_i_Zaprzyjaznione](#Liczby_Doskonale_i_Zaprzyjaznione)
-* [One_Direction_List](#One_Direction_List)
-* [Two_Direction_List](#Two_Direction_List)
-* [Print_All_Colors](#Print_All_Colors)
+* `Basic` [Agent_Na_Plaszczyznie](#Agent_Na_Plaszczyznie)
+* `Game` [Gra_Mastermind](#Gra_Mastermind)
+* `Pattern` [Wzorzec_w_Ciagu_Znakow](#Wzorzec_w_Ciagu_Znakow)
+* `Basic` [Bankomat](#Bankomat)
+* `Data Structures` [FIFO_Queue](#FIFO_Queue)
+* `Math` [Liczby_Doskonale_i_Zaprzyjaznione](#Liczby_Doskonale_i_Zaprzyjaznione)
+* `Data Structures` [One_Direction_List](#One_Direction_List)
+* `Data Structures` [Two_Direction_List](#Two_Direction_List)
+* `Basic` [Print_All_Colors](#Print_All_Colors)
 
 ## Topics
 ### Agent_Na_Plaszczyznie
