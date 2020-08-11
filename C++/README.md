@@ -1,12 +1,12 @@
 ## Contents
-* [Zachlanny_Bankier](#Zachlanny_Bankier)
-* [Ksiazki_Na_Polce](#Ksiazki_Na_Polce)
-* [Ksiazki_Na_Polce_Odwrotnie](#Ksiazki_Na_Polce_Odwrotnie)
-* [Maly_Symbol_Newtona](#Maly_Symbol_Newtona)
-* [Maskowanie](#Maskowanie)
-* [Pole_i_Obwod_Figury](#Pole_i_Obwod_Figury)
-* [Przerwany_Fibonacci](#Przerwany_Fibonacci)
-* [Wiersz_Trojkata_Pascala](#Wiersz_Trojkata_Pascala)
+* `Logic` [Zachlanny_Bankier](#Zachlanny_Bankier)
+* `Logic` [Ksiazki_Na_Polce](#Ksiazki_Na_Polce)
+* `Logic` [Ksiazki_Na_Polce_Odwrotnie](#Ksiazki_Na_Polce_Odwrotnie)
+* `Math` [Maly_Symbol_Newtona](#Maly_Symbol_Newtona)
+* `Logic` [Maskowanie](#Maskowanie)
+* `Inheritance` [Pole_i_Obwod_Figury](#Pole_i_Obwod_Figury)
+* `Math` [Przerwany_Fibonacci](#Przerwany_Fibonacci)
+* `Math` [Wiersz_Trojkata_Pascala](#Wiersz_Trojkata_Pascala)
 
 ## Topics
 ### Zachlanny_Bankier
