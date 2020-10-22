@@ -3,10 +3,10 @@ Scripts run and working on Linux Ubuntu 18.04
 
 ## Contents
 * `Natwork` [Check_IPs](#Check_IPs)
+* `Game` [Ping_Pong](#Ping_Pong)
 * `Basic`[Folder_Search](#Folder_Search)
 * `Basic` [Image_to_ANSI](#Image_to_ANSI)
 * `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
-* `Game` [Ping_Pong](#Ping_Pong)
 * `Basic` [Processes](#Processes)
 * `Basic` [Site_Checker](#Site_Checker)
 * `Basic` [System_Stats](#System_Stats)
@@ -14,6 +14,10 @@ Scripts run and working on Linux Ubuntu 18.04
 ## Topics
 ### Check_IPS
 More info in [folder](Check_IPs).
+
+### Ping_Pong
+A Ping-Pong game for console. This is pretty self-explanatory.
+![](imgs/ping-pong.png)
 
 ### Folder_Search
 Script design to collect data of words collected in directory subtree. With four different options, allows to (for each file) count all occurences in all files in folder, count amount of files in which occures and list all lines in which appears, along with filename and line number. Additionally allows aist all lines with word duplications in them, from all files in directory subtree.
@@ -23,10 +27,6 @@ Script to download a photo of kitten from [API](https://api.thecatapi.com/v1/ima
 
 ### Lowercase_Files_Names
 Script to change names of all files in given folder to lowercase.
-
-### Ping_Pong
-A Ping-Pong game for console. This is pretty self-explanatory.
-![](imgs/ping-pong.png)
 
 ### Processes
 Script showing basic data about current working processes, such as process id (PID), parent process id (PPID), name, state and count.
