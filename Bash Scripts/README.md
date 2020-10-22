@@ -3,6 +3,7 @@ Scripts run and working on Linux Ubuntu 18.04
 
 ## Contents
 * `Natwork` [Check_IPs](#Check_IPs)
+* `Basic`[Folder_Search](#Folder_Search)
 * `Basic` [Image_to_ANSI](#Image_to_ANSI)
 * `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
 * `Game` [Ping_Pong](#Ping_Pong)
@@ -13,6 +14,9 @@ Scripts run and working on Linux Ubuntu 18.04
 ## Topics
 ### Check_IPS
 More info in [folder](Check_IPs).
+
+### Folder_Search
+Script design to collect data of words collected in directory subtree. With four different options, allows to (for each file) count all occurences in all files in folder, count amount of files in which occures and list all lines in which appears, along with filename and line number. Additionally allows aist all lines with word duplications in them, from all files in directory subtree.
 
 ### Image_to_ANSI
 Script to download a photo of kitten from [API](https://api.thecatapi.com/v1/images/search) and display it in console using img2txt. Additionally, it displays a random Chuck Norris quote downloaded from [API](http://api.icndb.com/jokes/random).
