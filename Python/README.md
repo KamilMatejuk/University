@@ -13,11 +13,13 @@
 * `Natwork` [Estimating_Net_Reliabality](#Estimating_Net_Reliabality)
 * `Basic` [Find_Repeting_Files](#Find_Repeting_Files)
 * `Data Structures` [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication)
-* `Machine Learning` [Neural_Network_XOR](#Neural_Network_XOR)
-* `Machine Learning` [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
 * `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
 * `Linear Regression` [Movie_Recomendation](#Movie_Recomendation)
+* `Machine Learning` [Neural_Network_XOR](#Neural_Network_XOR)
+* `Machine Learning` [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
 * `Basic` [Pascal_Triangle](#Pascal_Triangle)
+* `Language Processing` [Pattern_Search_FA](#Pattern_Search_FA)
+* `Language Processing` [Pattern_Search_KMP](#Pattern_Search_KMP)
 * `Cryptography` [RSA_Encryption_Decryption](#RSA_Encryption_Decryption)
 
 ## Topics
@@ -76,6 +78,12 @@ Find and print duplicated files in given folder and subfolders. Two files are co
 ### Fourier_Transfrom_Multiplication
 Multiplication of big integers using Fourier Transform and three different algorithms (given by profesor, my own, numpy.fft).
 
+### Lowercase_Files_Names
+Algorithm changing all files name to lowercase in given directory and below.
+
+### Movie_Recomendation
+Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. This set is quite big (`ml-latest.zip`, `265 MB`, `27 000 000` ratings, by `280 000` users on `58 000` movies). Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
+
 ### Neural_Network_XOR
 Not using any neural network related module write from scratch a basic neural network. The purpose of which will be XOR function.
 ```
@@ -95,14 +103,20 @@ I used Jupyter Notebook so a lot of comments are inside, but it not always displ
 jupyter notebook Neural_Network_Function_Approximation.ipynb
 ```
 
-### Lowercase_Files_Names
-Algorithm changing all files name to lowercase in given directory and below.
-
-### Movie_Recomendation
-Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. This set is quite big (`ml-latest.zip`, `265 MB`, `27 000 000` ratings, by `280 000` users on `58 000` movies). Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
-
 ### Pascal_Triangle
 A recurrent algorithm (optimized for time and memmory complexity) for creating pascal triangle.
+
+### Pattern_Search_FA
+Find pattern in longer string, using algorythm with Finite Automata. The first argument should be pattern, the second is path to file with text to search through.
+```
+python3 Pattern_Search_FA.py <pattern> <path/to/file/with/text>
+```
+
+### Pattern_Search_KMP
+Find pattern in longer string, using Knuth-Morris-Pratt algorythm. The first argument should be pattern, the second is path to file with text to search through.
+```
+python3 Pattern_Search_FA.py <pattern> <path/to/file/with/text>
+```
 
 ### RSA_Encryption_Decryption
 A program to cypher and decypher given file using RSA algorithm. To check if random number if prime use Miller-Rabin algorithm.<br/>
