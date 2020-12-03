@@ -9,6 +9,7 @@ Scripts run and working on Linux Ubuntu 18.04
 * `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
 * `Basic` [Processes](#Processes)
 * `Basic` [Site_Checker](#Site_Checker)
+* `Version Control` [Svn_To_Git_Transformation](#Svn_To_Git_Transformation)
 * `Basic` [System_Stats](#System_Stats)
 
 ## Topics
@@ -33,6 +34,9 @@ Script showing basic data about current working processes, such as process id (P
 
 ### Site_Checker
 Script checking site `$1` for changes every `$2` seconds and displaying message in console when change found.
+
+### Svn_To_Git_Transformation
+Script taking as arguments 2 revisions numbers (from, to) and url to svn repository. Creates a local git repository, with each commit copies as is from svn (copies commit message and file changes).
 
 ### System_Stats
 Sript showing basic data about PC, such as current download speed, how long is system up, on what percentage battery is and average system usage over 1-5-15 min.
