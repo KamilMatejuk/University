@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kamil Matejuk, 250135
+# Kamil Matejuk
 
 
 function getMessage {
