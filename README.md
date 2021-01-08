@@ -3,6 +3,6 @@ This repository contains majority of my projects during studying Computer Scienc
 Codes are from different parts of studying, from fresh-year 2018 till today, so the coding style may (and will) change.</br></br>
 
 Below are links to projects I took part in, but are hosted somewhere else:
-* [GO Game `Java`](https://github.com/Skazmen/ProjektTP)
-* [Twitter generator `Python`](https://github.com/Reclocco/PYTON-SUPER-PROJEKT)
-* [Cyber City Sim - city creation game `Python`](https://github.com/jerry-sky/cyber-city-sim)
+* [GO Game](https://github.com/Skazmen/ProjektTP) `Java`
+* [Twitter generator](https://github.com/Reclocco/PYTON-SUPER-PROJEKT) `Python`
+* [Cyber City Sim - city creation game](https://github.com/jerry-sky/cyber-city-sim) `Angular` `TypeScript` `Node.js`
