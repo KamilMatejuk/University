@@ -2,7 +2,7 @@
 Programs written for Embedded Systems
 
 ## Contents
-* `Automation` [Run Scripts](#run_scripts)
+* `Automation` [Run Scripts](#run-scripts)
 
 ## Topics
 ### Run Scripts
