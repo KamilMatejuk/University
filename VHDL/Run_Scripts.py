@@ -67,7 +67,7 @@ def bash_command(command):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     if error:
-        print()
+        print('\033[31;1mERROR\033[0m')
         error = error.decode('ascii').strip()
         for line in error.split('\n'):
             if 'warning' in line:
