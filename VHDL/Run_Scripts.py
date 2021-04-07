@@ -98,8 +98,26 @@ def bash_command(command):
             print(output)
 
 
+def center(text):
+    _, columns = os.popen('stty size', 'r').read().split()
+    return '{text:^{w}}'.format(text=text, w=columns)
+
 if __name__ == '__main__':
     try:
+        # show help
+        if '--help' in sys.argv or len(sys.argv) == 1:
+            print()
+            print(center('Program used for running multiple VHDL files.'))
+            print(center('Programs specified in <files-list> will all be compiled and evaluated'))
+            print(center('but only the last program will be run.'))
+            print()
+            print('\t$ syswb file1.vhd file2.vhdl ... file69.vhd [--del] [--vcd] [--help]')
+            print()
+            print('\t\'--del\' \tremove cached object before running')
+            print('\t\'--vcd\' \tgenerate .vcd file with waves values')
+            print('\t\'--help\' \tshow help')
+            print()
+            exit(0)
         # remove cached entities
         if '--del' in sys.argv:
             for f in glob.glob('work-obj*.cf'):
@@ -125,3 +143,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print()
         exit(0)
+        
