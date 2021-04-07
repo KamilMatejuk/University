@@ -49,7 +49,11 @@ def accept(text, accepted=False):
 
 
 def finished(password):
-    print('Your password is:', password)
+    standards = checkStandards(password)
+    if all(standards):
+        print('Your password is:', password)
+    else:
+        print('Your password should meet all the rules')
 
 
 def checkStandards(password):
