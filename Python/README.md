@@ -119,7 +119,7 @@ python3 Pattern_Search_FA.py <pattern> <path/to/file/with/text>
 ### Pattern_Search_KMP
 Find pattern in longer string, using Knuth-Morris-Pratt algorythm. The first argument should be pattern, the second is path to file with text to search through.
 ```
-python3 Pattern_Search_FA.py <pattern> <path/to/file/with/text>
+python3 Pattern_Search_KMP.py <pattern> <path/to/file/with/text>
 ```
 
 ### RSA_Encryption_Decryption
