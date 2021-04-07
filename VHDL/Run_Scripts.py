@@ -18,13 +18,26 @@ def add_compile(f):
 
 
 '''
-Run VHDL code from file f
+Run VHDL code from file f, and generate vcd file if specified
 '''
-def run(f):
+def run(f, vcd):
     entity = get_entity(f)
     # running
-    print(yellow(text_with_var('Running ...', f'[ghdl -r {entity}]')))
-    os.system(f'ghdl -r {entity}')
+    vcd = f' --vcd={entity}.vcd' if vcd else ''
+    print(yellow(text_with_var('Running ...', f'[ghdl -r {entity}{vcd}]')))
+    os.system(f'ghdl -r {entity}{vcd}')
+
+
+'''
+Show wave file
+'''
+def vcd(f):
+    entity = get_entity(f)
+    # running
+    print(yellow(text_with_var('Wave file ...', f'[gtkwave {entity}.vcd]')))
+    command = ['gtkwave', f'{entity}.vcd']
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process.communicate()
 
 
 '''
@@ -86,21 +99,29 @@ def bash_command(command):
 
 
 if __name__ == '__main__':
-    # remove cached entities
-    if '--del' in sys.argv:
-        for f in glob.glob('work-obj*.cf'):
-            os.remove(f)
-            print(yellow(text_with_var('Removing file', f'"{f}"') + '\033[32;1mOK\033[0m'))
-    
-    # get list of files
-    files = [a for a in sys.argv[1:] if a != '--del']
-    if len(files) == 0:
-        print('Choose file / list of files to compile and run')
-        exit(1)
+    try:
+        # remove cached entities
+        if '--del' in sys.argv:
+            for f in glob.glob('work-obj*.cf'):
+                os.remove(f)
+                print(yellow(text_with_var('Removing file', f'"{f}"') + '\033[32;1mOK\033[0m'))
+        
+        # get list of files
+        files = [a for a in sys.argv[1:] if a not in ['--del', '--vcd']]
+        if len(files) == 0:
+            print('Choose file / list of files to compile and run')
+            exit(1)
 
-    # compile all into same workspace
-    for f in files:
-        add_compile(f)
-    
-    # run entity from last file
-    run(files[-1])
+        # compile all into same workspace
+        for f in files:
+            add_compile(f)
+        
+        # run entity from last file
+        run(files[-1], '--vcd' in sys.argv)
+
+        # show wave file
+        if '--vcd' in sys.argv:
+            vcd(files[-1])
+    except KeyboardInterrupt:
+        print()
+        exit(0)
