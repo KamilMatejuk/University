@@ -18,6 +18,7 @@
 * `Machine Learning` [Neural_Network_XOR](#Neural_Network_XOR)
 * `Machine Learning` [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
 * `Basic` [Pascal_Triangle](#Pascal_Triangle)
+* `Command Line` [Password Validator Cmd](#Password_Validator_Cmd)
 * `Language Processing` [Pattern_Search_FA](#Pattern_Search_FA)
 * `Language Processing` [Pattern_Search_KMP](#Pattern_Search_KMP)
 * `Cryptography` [RSA_Encryption_Decryption](#RSA_Encryption_Decryption)
@@ -105,6 +106,9 @@ jupyter notebook Neural_Network_Function_Approximation.ipynb
 
 ### Pascal_Triangle
 A recurrent algorithm (optimized for time and memmory complexity) for creating pascal triangle.
+
+### Password_Validator_Cmd
+A code written for [StackOverflow question](https://stackoverflow.com/questions/66991487/how-to-check-for-a-character-in-an-input-while-its-being-written/66993087#66993087). The idea is to get user password in command line, while still not showing user its input, but with each new key, check if the password meets all the required rules.
 
 ### Pattern_Search_FA
 Find pattern in longer string, using algorythm with Finite Automata. The first argument should be pattern, the second is path to file with text to search through.
