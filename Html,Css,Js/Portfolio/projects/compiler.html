@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Kamil Matejuk">
+    <title>Compiler</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../fontello/css/fontello.css">
+</head>
+
+<body>
+    <!-- upper navigation -->
+    <nav>
+        <a href="../index.html">About</a>
+        <a href="../projects.html">Projects</a>
+        <a href="../interests.html">Interests</a>
+        <a href="index.html#contact" id="phone-contact"><i class="icon-phone"></i></a>
+    </nav>
+
+    <!-- content of the page -->
+    <main class="projects">
+        <img alt="image"  class="project-desc-img" src="../imgs/compiler.png"/>
+        <section>
+            <code class="bg-code">&#60;/&#62;</code>
+            <h4 class="title">Compiler</h4>
+            <p>Compiler description 1 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum, fuga.</p>
+            <p>Compiler description 2 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum, fuga.</p>
+            <p class="technologies">C++, Flex, Bison</p>
+        </section>
+        <section>
+            <h4>Code</h4>
+            <code class="bg-code">&#60;/&#62;</code>
+            <code class="code">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string.h&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+extern string run_parser(FILE * input, bool debug);
+
+int main(int argc, char const * argv[]){
+    FILE * input;
+
+    <span class="comment">// check args</span>
+    if(argc &lt; 3 || argc &gt; 5){
+    cerr &lt;&lt; "Please specify input and output files as respectively 2nd and 3rd argument" &lt;&lt; endl;
+    cerr &lt;&lt; "You can add --debug as a last argument, for debugging options";
+    return -1;
+    }
+
+    <span class="comment">// open file</span>
+    input = fopen(argv[1], "r");
+    if(!input){
+    cerr &lt;&lt; "Couldn't open file " &lt;&lt; argv[1] &lt;&lt; endl;
+    return -1;
+    }
+    bool debug = (argc == 4 && string(argv[3]) == "--debug");
+    string machine_code = run_parser(input, debug);
+    fclose(input);
+
+    <span class="comment">// save output to file</span>
+    ofstream output;
+    output.open(argv[2]);
+    output &lt;&lt; machine_code;
+    output.close();
+
+    return 0;
+}</code>
+            <a href="https://github.com/KamilMatejuk/Compiler" target="_blank">See full code</a>
+        </section>
+    </main>
+
+    <!-- footer with contact data -->
+    <footer>
+        <p>Kamil Matejuk</p>
+        <div class="icons">
+            <a href="https://www.facebook.com/kamil.matejuk.5" target="_blank"><i class="icon-facebook-squared"></i></a>
+            <a href="https://www.linkedin.com/in/kamil-matejuk-323a39180/" target="_blank"><i
+                    class="icon-linkedin-squared"></i></a>
+            <a href="https://github.com/kamilmatejuk" target="_blank"><i class="icon-github-squared"></i></a>
+            <a href="https://stackoverflow.com/users/6645624/k-mat" target="_blank"><i
+                    class="icon-stackoverflow"></i></a>
+        </div>
+    </footer>
+</body>
+
+</html>

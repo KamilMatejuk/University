@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Kamil Matejuk">
+    <title>Fast Reading App</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../fontello/css/fontello.css">
+</head>
+
+<body>
+    <!-- upper navigation -->
+    <nav>
+        <a href="../index.html">About</a>
+        <a href="../projects.html">Projects</a>
+        <a href="../interests.html">Interests</a>
+        <a href="index.html#contact" id="phone-contact"><i class="icon-phone"></i></a>
+    </nav>
+
+    <!-- content of the page -->
+    <main class="projects">
+        <img alt="image"  class="project-desc-img" src="../imgs/fast-reading-app.png"/>
+        <section>
+            <code class="bg-code">&#60;/&#62;</code>
+            <h4 class="title">Fast Reading App</h4>
+            <p>Fast Reading App description 1 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum, fuga.</p>
+            <p>Fast Reading App description 2 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum, fuga.</p>
+            <p class="technologies">Java, Android</p>
+        </section>
+        <section>
+            <code class="bg-code">&#60;/&#62;</code>
+            <h4>Code</h4>
+            <code class="code">public abstract class AbstractTrening extends AppCompatActivity {
+
+TextView textView;
+EditText editText;
+int time, rounds, size, width, count;
+boolean waitingForInput = true;
+ArrayList&lt;String&gt; userAnswers = null;
+ArrayList&lt;String&gt; givenNumbers = null;
+
+protected abstract void textChanged(CharSequence s); <span class="comment">// wyłapywanie kiedy klient skończył wpisywać</span>
+protected abstract void newText(); <span class="comment">// wyswietlanie tekstu</span>
+protected abstract void startTest();
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.trening);
+
+    textView = findViewById(R.id.textView_speed);
+    editText = findViewById(R.id.editText_speed);
+
+    SharedPreferences sharedPreferences = getSharedPreferences("db", Context.MODE_PRIVATE);
+    time = sharedPreferences.getInt("time", 1000);
+    rounds = sharedPreferences.getInt("rounds", 10);
+    size = sharedPreferences.getInt("size", 2);
+    width = sharedPreferences.getInt("width", 20);
+    count = sharedPreferences.getInt("count", 1);
+
+
+    countdown();
+
+    editText.addTextChangedListener(new TextWatcher() {
+        <span class="comment">...</span>
+    });
+}
+
+private void countdown() {
+    editText.setVisibility(View.INVISIBLE);
+    textView.setTextSize(50);
+    new Thread() {
+        public void run() {
+            try {
+                for(int i=3; i>=0; i--){
+                    final int finalI = i;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String c = (finalI>0 ? String.valueOf(finalI) : "Start!");
+                            textView.setText(c);
+                        }
+                    });
+                    Thread.sleep(1000);
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        editText.setVisibility(View.VISIBLE);
+                        textView.setTextSize(30);
+                    }
+                });
+                startTest();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }.start();
+}</code>
+            <a href="https://github.com/KamilMatejuk/Fast-Reading-Mobile-App" target="_blank">See full code</a>
+        </section>
+    </main>
+
+    <!-- footer with contact data -->
+    <footer>
+        <p>Kamil Matejuk</p>
+        <div class="icons">
+            <a href="https://www.facebook.com/kamil.matejuk.5" target="_blank"><i class="icon-facebook-squared"></i></a>
+            <a href="https://www.linkedin.com/in/kamil-matejuk-323a39180/" target="_blank"><i
+                    class="icon-linkedin-squared"></i></a>
+            <a href="https://github.com/kamilmatejuk" target="_blank"><i class="icon-github-squared"></i></a>
+            <a href="https://stackoverflow.com/users/6645624/k-mat" target="_blank"><i
+                    class="icon-stackoverflow"></i></a>
+        </div>
+    </footer>
+</body>
+
+</html>
