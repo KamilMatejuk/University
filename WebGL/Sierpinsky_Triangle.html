@@ -1,0 +1,392 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 1, Zadanie 2
+    
+    Część Pierwsza - Trójkąt Sierpińskiego
+    Po uruchomieniu należy wybrać stopień suwakiem na górze strony
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 2.1</title>
+</head>
+
+<body>
+    <!-- podstawowe stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: 5vh 1fr;
+        }
+
+        #canvas {
+            width: 95vw;
+            height: 92.5vh;
+            margin: 0 auto;
+            border: 1px solid #000000;
+        }
+
+        section {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1.3rem;
+        }
+
+        input {
+            margin-left: 5vw;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <section>
+        <p id="deg_text">Wybrany stopień: 1</p>
+        <input id="input" type="range" min=0, max=8, step=1>
+    </section>
+    <canvas id="canvas"></canvas>
+
+    <!-- tekst VertexShadera -->
+    <!--
+        aVertexPosition jest wektorem 2-elementowym, bo przechowuję tylko
+        pozycje (x, y). W shaderze do gl_Position jest dodawana domyślna pozycja
+        w trzeciej płaszczyźnie jako 0.0
+
+        aVertexColor jest wektorem 3-elementowym, przekazywanym do FragmentShadera
+    -->
+    <script id="vs" type="x-shader/x-vertex">
+        precision mediump float;
+
+        attribute vec2 aVertexPosition;
+
+        void main() {
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <!-- 
+        w tym miejscu gl_FragColor jest definiowany na podstawie przekazanego
+        koloru fragColor
+     -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        void main() {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+
+        // po załadowaniu urychamiana jest metoda getConstants()
+        window.onload = init;
+
+        // globalna zmienna przechowująca instancję klasy Turtle
+        var turtle;
+
+        // domyślny kierunek (od 0 do 360 stopni)
+        // gdzie 0 oznacza w prawo,
+        // a stopnie rosną w kierunku przeciwnym do ruchu wskazówek zegara
+        STARTING_DIRECTION = 0;
+
+        // rozmiar planszy po której porusza się gracz
+        // (domyślnie 1:1 skala canvas w pikselach)
+        var MIN_X, MAX_X, MIN_Y, MAX_Y;
+
+        // stopień trójkąta
+        MIN_DEGREE = 1, MAX_DEGREE = 7;
+        DEGREE = 1;
+
+        // dodanie listenera do slidera, oraz rysowanie od nowa
+        // po każdej zmianie
+        function addListener() {
+            const text = document.getElementById("deg_text");
+            const input = document.getElementById("input");
+            input.min = MIN_DEGREE;
+            input.max = MAX_DEGREE;
+            input.value = DEGREE;
+            input.addEventListener("input", (event) => {
+                const d = input.value;
+                text.innerHTML = `Wybrany stopień: ${d}`;
+                DEGREE = d;
+                turtle.sierpinskiTriangle();
+            });
+        }
+
+        // // pobranie od użytkownika stopnia fraktala
+        // function getDegree() {
+        //     var err = 'Niepoprawna wartość';
+        //     var deg = prompt(`Podaj stopień Trójkąt Sierpińskiego (pomiędzy ${MIN_DEGREE} a ${MAX_DEGREE})`, `${DEGREE}`);
+        //     if (deg != null && deg != "") {
+        //         var d = parseInt(deg.toString().toLowerCase());
+        //         err = 'Podaj wartość naturalną w zakresie';
+        //         if (!isNaN(d) && MIN_DEGREE <= d && d <= MAX_DEGREE) {
+        //             DEGREE = d;
+        //             // zainicjalizować WebGL
+        //             init();
+        //             return;
+        //         }
+        //     }
+        //     console.error(err);
+        //     getDegree();
+        // }
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            addListener();
+
+            // pobranie canvas i WebGL Context
+            canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            MIN_X = -(gl.canvas.width / 2);
+            MAX_X = gl.canvas.width / 2;
+            MIN_Y = -(gl.canvas.height / 2);
+            MAX_Y = gl.canvas.height / 2;
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // inicjalizacja i kompilacja VertexShadera
+            const vsSource = document.getElementById('vs').firstChild.nodeValue;
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vsSource);
+            gl.compileShader(vertexShader);
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fsSource = document.getElementById('fs').firstChild.nodeValue;
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fsSource);
+            gl.compileShader(fragmentShader);
+
+            // dołączenie shaderów do programu
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            gl.useProgram(shaderProgram);
+
+            // załadowanie buffora,
+            // przechowującego w jednej iteracji 5 floatów
+            // [ pozycja_X, pozycja_Y, color_R, color_G, color_B ]
+            compoundBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, compoundBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, 20 * 4500, gl.DYNAMIC_DRAW);
+            shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition')
+            shaderProgram.aVertexColor = gl.getAttribLocation(shaderProgram, 'aVertexColor')
+            gl.vertexAttribPointer(
+                shaderProgram.aVertexPosition,
+                2,                                  // pobierz 2 wartości w każdej iteracji
+                gl.FLOAT,                           // typ float
+                false,                              // bez normalizacji
+                0,                                  // rozmiar jednej iteracji
+                0);                                 // przesunięcie w ramach iteracji
+            gl.enableVertexAttribArray(shaderProgram.aVertexPosition);
+
+            // utworzenie instancji obiektu Turtle, na podstawie
+            // kontekstu gl i buffora
+            turtle = new Turtle(gl, compoundBuffer);
+            turtle.sierpinskiTriangle();
+        }
+
+
+        /**
+         * Klasa odpowiadająca za logikę rysowania grafiki żółwia
+         * zawierająca JavaScriptową implementację języka logo
+         */
+        class Turtle {
+            constructor(gl, buffer) {
+                this.gl = gl;
+                this.buffer = buffer;
+                this.__startingValues();
+            }
+
+            /**
+             * metoda resetująca wartości zmiennych do początkowych
+             */
+            __startingValues() {
+                this.last_direction = STARTING_DIRECTION;
+                // gracz zaczyna w punkcie (0, 0) na planszy,
+                // więc zależnie od wartości MIN_X, MAX_X, MIN_Y, MAX_Y
+                // będzie to w różnym położeniu względem planszy
+                this.points = [];
+                this.__addPoint(
+                    -1.0 + (Math.abs(MIN_X / (MAX_X - MIN_X)) * 2),
+                    -1.0 + (Math.abs(MIN_Y / (MAX_Y - MIN_Y)) * 2)
+                );
+                this.points.shift();
+            }
+
+
+            /**
+             * metoda dodająca punkty o zadanych współrzędnych X, Y
+             * do tabeli oraz bufora
+             */
+            __addPoint(x, y) {
+                var pts = [x, y];
+                this.points.push(pts);
+                this.points.push(pts);
+                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+                this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 8 * (this.points.length - 2), new Float32Array(pts));
+                this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 8 * (this.points.length - 1), new Float32Array(pts));
+            }
+
+            /**
+             * Implementacja instrukcji 'FORWARD D' z języka Logo,
+             * przesuwająca gracza o 'D' do przodu w kierunku,
+             * w którym aktualnie jest zwrócony gracz
+             */
+            __forward(distance) {
+                // poprzedni punkt
+                var [start_x, start_y] = this.points.slice(-1)[0];
+                // kierunek w radianach
+                var dir_rad = (this.last_direction % 360) * Math.PI / 180;
+                // skalowanie dyctansu na podstawie MIN_X, MAX_X, MIN_Y, MAX_Y
+                var dx = Math.cos(dir_rad) * distance / (Math.abs(MAX_X - MIN_X) / 2);
+                var dy = Math.sin(dir_rad) * distance / (Math.abs(MAX_Y - MIN_Y) / 2);
+                // utworzenie nowego punktu
+                this.__addPoint(start_x + dx, start_y + dy);
+            }
+
+            /**
+             * Implementacja instrukcji 'LEFT A' z języka Logo,
+             * zmieniająca kierunek gracza o 'A' stopni w lewo
+             */
+            __left(deg) {
+                this.last_direction = parseInt(this.last_direction) + parseInt(deg);
+            }
+
+            /**
+             * Implementacja instrukcji 'RIGHT A' z języka Logo,
+             * zmieniająca kierunek gracza o 'A' stopni w prawo
+             */
+            __right(deg) {
+                this.last_direction -= deg;
+            }
+
+            /**
+             * Metoda mapująca punkty WebGL w skali [-1.0, 1.0],
+             * na skalę używaną do rysowania
+            */
+            __scalePoint(x, y) {
+                return [
+                    x * (Math.abs(MAX_X - MIN_X) / 2),
+                    y * (Math.abs(MAX_Y - MIN_Y) / 2)
+                ]
+            }
+
+            /**
+             * Metoda rekurencyjnie rysująca trójkąt wewnątrz większego
+             * trójkąta i wywołująca rysowanie kolejnych trzech trójkatów
+             * na niższym stopniu
+             */
+            __triangle(size, start_x, start_y , deg = DEGREE) {
+                // przejdź do punktu startowego
+                var [curr_x, curr_y] = this.__scalePoint(...this.points.slice(-1)[0]);
+                if (start_x != null && start_y != null) {
+                    // dystans
+                    var d = Math.sqrt(Math.pow(start_x - curr_x, 2) + Math.pow(start_y - curr_y, 2));
+                    // kąt
+                    var a_rad = Math.atan((start_y - curr_y) / (start_x - curr_x));
+                    if (start_x < curr_x) {
+                        a_rad += Math.PI
+                    }
+                    var a = a_rad * 180 / Math.PI;
+                    var da = a - this.last_direction;
+                    this.__left(da);
+                    this.__forward(d);
+                } else {
+                    start_x = curr_x;
+                    start_y = curr_y;
+                }
+                // narysuj trójkąt
+                this.last_direction = 0;
+                this.__forward(size / 2);
+                this.__left(60);
+                const start = this.points.length;
+                this.__forward(size / 2);
+                this.__left(120);
+                this.__forward(size / 2);
+                this.__left(120);
+                this.__forward(size / 2);
+                const count = this.points.length - start;
+                this.gl.drawArrays(gl.LINES, start - 1, count);
+                // narysuj mniejsze trójkąty rekursywnie
+                if (deg > 1) {
+                    const tr1 = [
+                        start_x,
+                        start_y
+                    ]
+                    const tr2 = [
+                        start_x + (size / 2),
+                        start_y
+                    ]
+                    const tr3 = [
+                        start_x + (size / 4),
+                        start_y + (Math.sqrt(3) * size / 4)
+                    ]
+                    this.__triangle(size / 2, ...tr1, deg - 1);
+                    this.__triangle(size / 2, ...tr2, deg - 1);
+                    this.__triangle(size / 2, ...tr3, deg - 1);
+                }
+            }
+
+            /**
+             * Metoda rysująca trójkąt sierpińskiego
+             */ 
+            sierpinskiTriangle() {
+                this.__startingValues();
+                this.gl.clear(gl.COLOR_BUFFER_BIT);
+                const size = 0.9 * Math.min(this.gl.canvas.width, this.gl.canvas.height);
+
+                // get to corner
+                this.__right(135);
+                this.__forward(parseInt(size * Math.sqrt(2) / 2));
+                this.__right(135);
+                this.__forward(parseInt((this.gl.canvas.height - size) / 2));
+                this.__right(90);
+
+                // draw first triangle
+                const start = this.points.length;
+                this.__forward(size);
+                this.__left(120);
+                this.__forward(size);
+                this.__left(120);
+                this.__forward(size);
+                this.__left(120);
+                const count = this.points.length - start;
+                this.gl.drawArrays(gl.LINES, start - 1, count);
+
+                this.__triangle(size, null, null);
+            }
+        }
+    </script>
+</body>
+
+</html>
