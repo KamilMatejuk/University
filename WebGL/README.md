@@ -1,6 +1,6 @@
 ## Contents
-* `2D Logo` [Turtle_1](#Turtle_1)
-* `2D Logo` [Turtle_2](#Turtle_2)
+* `2D Logo` [Turtle_1](#turtle-1)
+* `2D Logo` [Turtle_2](#turtle-2)
 
 ## Topics
 ### Turtle 1
