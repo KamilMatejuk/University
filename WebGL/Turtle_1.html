@@ -1,0 +1,311 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 1, Zadanie 1
+
+    Część Pierwsza
+    Program rysuje na ekranie zakodowany wcześniej skrypt
+    procedury grafiki żółwia / języka Logo
+
+    Uwaga: rozmiar planszy nie jest powiązny z fizycznym rozmiarem canvas w przeglądarce,
+        dlatego jeżeli podamy rozmiar planszy kwadratowy, a okno canvas w przeglądarce nie
+        będzie kwadratowe, rysunki będą skalowane osobno do osi X i Y, więc efekt może mieć różne
+        skale na obu osiach.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 1.1</title>
+</head>
+
+<body>
+    <!-- podstawowe styleowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #canvas {
+            width: 95vw;
+            height: 95vh;
+            border: 1px solid #000000;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas"></canvas>
+
+    <!-- tekst VertexShadera -->
+    <!--
+        aVertexPosition jest wektorem 2-elementowym, bo przechowuję tylko
+        pozycje (x, y). W shaderze do gl_Position jest dodawana domyślna pozycja
+        w trzeciej płaszczyźnie jako 0.0
+
+        aVertexColor jest wektorem 3-elementowym, przekazywanym do FragmentShadera
+    -->
+    <script id="vs" type="x-shader/x-vertex">
+        precision mediump float;
+
+        attribute vec2 aVertexPosition;
+        attribute vec3 aVertexColor;
+
+        varying vec3 fragColor;
+
+        void main() {
+            fragColor = aVertexColor;
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+            
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <!-- 
+        w tym miejscu gl_FragColor jest definiowany na podstawie przekazanego
+        koloru fragColor
+     -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec3 fragColor;
+
+        void main() {
+            gl_FragColor = vec4(fragColor, 1.0);
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+
+        // po załadowaniu urychamiana jest metoda init()
+        window.onload = init;
+
+        // domyślny kolor
+        STARTING_COLOR = [0.0, 0.0, 0.0];
+        
+        // domyślny kierunek (od 0 do 360 stopni)
+        // gdzie 0 oznacza w prawo,
+        // a stopnie rosną w kierunku przeciwnym do ruchu wskazówek zegara
+        STARTING_DIRECTION = 0;
+
+        // rozmiar planszy po której porusza się gracz
+        // (nie ma związku z rozmiarem canvas w pikselach)
+        MIN_X = -100, MAX_X = 100;
+        MIN_Y = -100, MAX_Y = 100;
+
+        // globalna zmienna przechowująca instancję klasy Turtle
+        var turtle;
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            // pobranie canvas i WebGL Context
+            canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // inicjalizacja i kompilacja VertexShadera
+            const vsSource = document.getElementById('vs').firstChild.nodeValue;
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vsSource);
+            gl.compileShader(vertexShader);
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fsSource = document.getElementById('fs').firstChild.nodeValue;
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fsSource);
+            gl.compileShader(fragmentShader);
+
+            // dołączenie shaderów do programu
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            gl.useProgram(shaderProgram);
+
+            // załadowanie buffora,
+            // przechowującego w jednej iteracji 5 floatów
+            // [ pozycja_X, pozycja_Y, color_R, color_G, color_B ]
+            compoundBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, compoundBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, 20 * 200, gl.DYNAMIC_DRAW);
+            shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition')
+            shaderProgram.aVertexColor = gl.getAttribLocation(shaderProgram, 'aVertexColor')
+            gl.vertexAttribPointer(
+                shaderProgram.aVertexPosition,
+                2,                                  // pobierz 2 wartości w każdej iteracji
+                gl.FLOAT,                           // typ float
+                false,                              // bez normalizacji
+                5 * Float32Array.BYTES_PER_ELEMENT, // rozmiar jednej iteracji
+                0);                                 // przesunięcie w ramach iteracji
+            gl.vertexAttribPointer(
+                shaderProgram.aVertexColor,
+                3,                                   // pobierz 3 wartości w każdej iteracji
+                gl.FLOAT,                            // typ float
+                false,                               // bez normalizacji
+                5 * Float32Array.BYTES_PER_ELEMENT,  // rozmiar jednej iteracji
+                2 * Float32Array.BYTES_PER_ELEMENT); // przesunięcie w ramach iteracji
+            gl.enableVertexAttribArray(shaderProgram.aVertexPosition);
+            gl.enableVertexAttribArray(shaderProgram.aVertexColor);
+
+            // utworzenie instancji obiektu Turtle, na podstawie
+            // kontekstu gl i buffora
+            turtle = new Turtle(gl, compoundBuffer);
+            // wywołanie programu
+            turtle.run()
+        }
+
+
+        /**
+         * Klasa odpowiadająca za logikę rysowania grafiki żółwia
+         * zawierająca JavaScriptową implementację języka logo
+         */
+        class Turtle {
+            constructor(gl, buffer) {
+                this.gl = gl;
+                this.buffer = buffer;
+                this.last_direction = STARTING_DIRECTION;
+
+                // gracz zaczyna w punkcie (0, 0) na planszy,
+                // więc zależnie od wartości MIN_X, MAX_X, MIN_Y, MAX_Y
+                // będzie to w różnym położeniu względem planszy
+                this.points = [];
+                this.__addPoint(
+                    -1.0 + (Math.abs(MIN_X / (MAX_X - MIN_X)) * 2),
+                    -1.0 + (Math.abs(MIN_Y / (MAX_Y - MIN_Y)) * 2),
+                    STARTING_COLOR
+                );
+                this.points.shift();
+            }
+
+            /**
+             * metoda dodająca punkty o zadanych współrzędnych X, Y i kolorze
+             * do tabeli oraz bufora
+             */
+            __addPoint(x, y, color = STARTING_COLOR) {
+                var pts = [x, y, ...color];
+                this.points.push(pts);
+                this.points.push(pts);
+                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+                this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 20 * (this.points.length - 2), new Float32Array(pts));
+                this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 20 * (this.points.length - 1), new Float32Array(pts));
+            }
+
+            /**
+             * Implementacja instrukcji 'FORWARD D' z języka Logo,
+             * przesuwająca gracza o 'D' do przodu w kierunku,
+             * w którym aktualnie jest zwrócony gracz
+             */
+            __forward(distance, color = STARTING_COLOR) {
+                // poprzedni punkt
+                var [start_x, start_y, r, g, b] = this.points.slice(-1)[0];
+                // kierunek w radianach
+                var dir_rad = (this.last_direction % 360) * Math.PI / 180;
+                // skalowanie dyctansu na podstawie MIN_X, MAX_X, MIN_Y, MAX_Y
+                var dx = Math.cos(dir_rad) * distance / (Math.abs(MAX_X - MIN_X) / 2);
+                var dy = Math.sin(dir_rad) * distance / (Math.abs(MAX_Y - MIN_Y) / 2);
+                // utworzenie nowego punktu
+                this.__addPoint(start_x + dx, start_y + dy, color);
+            }
+
+            /**
+             * Implementacja instrukcji 'LEFT A' z języka Logo,
+             * zmieniająca kierunek gracza o 'A' stopni w lewo
+             */
+            __left(deg) {
+                this.last_direction = parseInt(this.last_direction) + parseInt(deg);
+            }
+
+            /**
+             * Implementacja instrukcji 'RIGHT A' z języka Logo,
+             * zmieniająca kierunek gracza o 'A' stopni w prawo
+             */
+            __right(deg) {
+                this.last_direction -= deg;
+            }
+
+            /**
+             * Metoda pozwajaląca narysować n-kąt foremny,
+             * o zadanym rozmiarze jednej ścianki i kolorze
+             */
+            __polygon(n, size, color = STARTING_COLOR) {
+                const deg = 360 / n;
+                this.__forward(0, color);
+                this.__forward(0, color);
+                for (var i = 0; i < n; i++) {
+                    this.__forward(size, color);
+                    this.__left(deg);
+                }
+            }
+
+            /**
+             * Metoda renderująca wszystkie punkty i połączenia utworzone
+             * podczas całego działania programu.
+             * Używana bardziej do debuggowania
+             */
+            __renderAll() {
+                this.gl.clear(gl.COLOR_BUFFER_BIT);
+                this.gl.drawArrays(gl.LINE_STRIP, 0, this.points.length);
+            }
+
+            /**
+             * Metoda renderująca konkretny element w odpowiednim kolorze.
+             * Element jest generowany przez funckję 'func' wywołaną
+             * z argumentami 'args'
+             */
+            __renderElement(func, args, color = STARTING_COLOR) {
+                const start = this.points.length;
+                func(...args, color);
+                const count = this.points.length - start;
+                this.gl.drawArrays(gl.LINES, start - 1, count);
+            }
+
+            /**
+             * Metoda rusyjąca kilka kolorowych wielokątów na ekranie
+             */
+            run() {
+                this.gl.clear(gl.COLOR_BUFFER_BIT);
+                this.__renderElement(this.__polygon.bind(this), [5, 40], [1, 0, 0]);
+                this.__right(120);
+                this.__forward(20);
+                this.__renderElement(this.__polygon.bind(this), [3, 30], [0, 1, 0]);
+                this.__right(120);
+                this.__forward(50);
+                this.__renderElement(this.__polygon.bind(this), [6, 20], [0, 0, 1]);
+                this.__right(190);
+                this.__forward(15);
+                this.__renderElement(this.__polygon.bind(this), [4, 35], [0, 1, 1]);
+                // this.__renderAll();
+            }
+
+
+        }
+    </script>
+</body>
+
+</html>
