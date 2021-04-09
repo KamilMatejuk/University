@@ -4,7 +4,7 @@
     Grafika Komputreowa, Labolatoria
     Lista 1, Zadanie 2
     
-    Część Druga - Płatek Kocha
+    Część Pierwsza - Trójkąt Sierpińskiego (WebGL)
     Po uruchomieniu należy wybrać stopień suwakiem na górze strony
 -->
 <!DOCTYPE html>
@@ -12,7 +12,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Zadanie 2.2</title>
+    <title>Zadanie 2.1</title>
 </head>
 
 <body>
@@ -109,7 +109,7 @@
         var MIN_X, MAX_X, MIN_Y, MAX_Y;
 
         // stopień trójkąta
-        MIN_DEGREE = 1, MAX_DEGREE = 6;
+        MIN_DEGREE = 1, MAX_DEGREE = 7;
         DEGREE = 1;
 
         // dodanie listenera do slidera, oraz rysowanie od nowa
@@ -124,7 +124,7 @@
                 const d = input.value;
                 text.innerHTML = `Wybrany stopień: ${d}`;
                 DEGREE = d;
-                turtle.kochSnowflake();
+                turtle.sierpinskiTriangle();
             });
         }
 
@@ -146,10 +146,12 @@
             gl.canvas.width = gl.canvas.clientWidth;
             gl.canvas.height = gl.canvas.clientHeight;
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            
             MIN_X = -(gl.canvas.width / 2);
             MAX_X = gl.canvas.width / 2;
             MIN_Y = -(gl.canvas.height / 2);
             MAX_Y = gl.canvas.height / 2;
+
             // ustawienie koloru tła na biały
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -179,7 +181,7 @@
             // [ pozycja_X, pozycja_Y, color_R, color_G, color_B ]
             compoundBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, compoundBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, 20 * 4000, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, 20 * 4500, gl.DYNAMIC_DRAW);
             shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition')
             shaderProgram.aVertexColor = gl.getAttribLocation(shaderProgram, 'aVertexColor')
             gl.vertexAttribPointer(
@@ -194,7 +196,7 @@
             // utworzenie instancji obiektu Turtle, na podstawie
             // kontekstu gl i buffora
             turtle = new Turtle(gl, compoundBuffer);
-            turtle.kochSnowflake();
+            turtle.sierpinskiTriangle();
         }
 
 
@@ -224,6 +226,7 @@
                 );
                 this.points.shift();
             }
+
 
             /**
              * metoda dodająca punkty o zadanych współrzędnych X, Y
@@ -272,50 +275,99 @@
             }
 
             /**
-             * Metoda rekurencyjnie rysująca jeden bok płatka
+             * Metoda mapująca punkty WebGL w skali [-1.0, 1.0],
+             * na skalę używaną do rysowania
+            */
+            __scalePoint(x, y) {
+                return [
+                    x * (Math.abs(MAX_X - MIN_X) / 2),
+                    y * (Math.abs(MAX_Y - MIN_Y) / 2)
+                ]
+            }
+
+            /**
+             * Metoda rekurencyjnie rysująca trójkąt wewnątrz większego
+             * trójkąta i wywołująca rysowanie kolejnych trzech trójkatów
+             * na niższym stopniu
              */
-            __line(size, deg = DEGREE) {
-                if (deg > 1) {
-                    this.__line(size / 3, deg - 1);
-                    this.__right(60);
-                    this.__line(size / 3, deg - 1);
-                    this.__left(120);
-                    this.__line(size / 3, deg - 1);
-                    this.__right(60);
-                    this.__line(size / 3, deg - 1);
+            __triangle(size, start_x, start_y , deg = DEGREE) {
+                // przejdź do punktu startowego
+                var [curr_x, curr_y] = this.__scalePoint(...this.points.slice(-1)[0]);
+                if (start_x != null && start_y != null) {
+                    // dystans
+                    var d = Math.sqrt(Math.pow(start_x - curr_x, 2) + Math.pow(start_y - curr_y, 2));
+                    // kąt
+                    var a_rad = Math.atan((start_y - curr_y) / (start_x - curr_x));
+                    if (start_x < curr_x) {
+                        a_rad += Math.PI
+                    }
+                    var a = a_rad * 180 / Math.PI;
+                    var da = a - this.last_direction;
+                    this.__left(da);
+                    this.__forward(d);
                 } else {
-                    this.__forward(size);
+                    start_x = curr_x;
+                    start_y = curr_y;
+                }
+                // narysuj trójkąt
+                this.last_direction = 0;
+                this.__forward(size / 2);
+                this.__left(60);
+                const start = this.points.length;
+                this.__forward(size / 2);
+                this.__left(120);
+                this.__forward(size / 2);
+                this.__left(120);
+                this.__forward(size / 2);
+                const count = this.points.length - start;
+                this.gl.drawArrays(gl.LINES, start - 1, count);
+                // narysuj mniejsze trójkąty rekursywnie
+                if (deg > 1) {
+                    const tr1 = [
+                        start_x,
+                        start_y
+                    ]
+                    const tr2 = [
+                        start_x + (size / 2),
+                        start_y
+                    ]
+                    const tr3 = [
+                        start_x + (size / 4),
+                        start_y + (Math.sqrt(3) * size / 4)
+                    ]
+                    this.__triangle(size / 2, ...tr1, deg - 1);
+                    this.__triangle(size / 2, ...tr2, deg - 1);
+                    this.__triangle(size / 2, ...tr3, deg - 1);
                 }
             }
 
             /**
              * Metoda rysująca trójkąt sierpińskiego
-             */
-            kochSnowflake() {
+             */ 
+            sierpinskiTriangle() {
                 this.__startingValues();
                 this.gl.clear(gl.COLOR_BUFFER_BIT);
-                const size = 0.7 * Math.min(this.gl.canvas.width, this.gl.canvas.height);
+                const size = 0.9 * Math.min(this.gl.canvas.width, this.gl.canvas.height);
 
-                // przejdź do rogu
+                // get to corner
                 this.__right(135);
                 this.__forward(parseInt(size * Math.sqrt(2) / 2));
                 this.__right(135);
                 this.__forward(parseInt((this.gl.canvas.height - size) / 2));
                 this.__right(90);
 
-                // narysuj płatek kocha
+                // draw first triangle
                 const start = this.points.length;
-                this.gl.clear(gl.COLOR_BUFFER_BIT);
-
-                this.__line(size);
+                this.__forward(size);
                 this.__left(120);
-                this.__line(size);
+                this.__forward(size);
                 this.__left(120);
-                this.__line(size);
+                this.__forward(size);
                 this.__left(120);
-
                 const count = this.points.length - start;
                 this.gl.drawArrays(gl.LINES, start - 1, count);
+
+                this.__triangle(size, null, null);
             }
         }
     </script>

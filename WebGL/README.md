@@ -6,10 +6,12 @@
 
 ## Topics
 ### Koch_Snowflake
-Draw a 2D fractal of [Koch Snowflake](https://en.wikipedia.org/wiki/Koch_snowflake) of degree specified by user. 
+Draw a 2D fractal of [Koch Snowflake](https://en.wikipedia.org/wiki/Koch_snowflake) of degree specified by user.
+First program uses simple `SVG`, second one `WebGL`.
 
 ### Sierpinsky_Triangle
-Draw a 2D fractal of [Sierpinsky Triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle) of degree specified by user. 
+Draw a 2D fractal of [Sierpinsky Triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle) of degree specified by user.
+First program uses simple `SVG`, second one `WebGL`.
 
 ### Turtle 1
 Implement procedure of *Turtle Graphics*, also known as [Logo programming language](https://en.wikipedia.org/wiki/Logo_(programming_language)). Using commands `forward`, `left` and `right`, draw some shapes in different colours.

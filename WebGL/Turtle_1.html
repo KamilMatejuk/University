@@ -6,12 +6,7 @@
 
     Część Pierwsza
     Program rysuje na ekranie zakodowany wcześniej skrypt
-    procedury grafiki żółwia / języka Logo
-
-    Uwaga: rozmiar planszy nie jest powiązny z fizycznym rozmiarem canvas w przeglądarce,
-        dlatego jeżeli podamy rozmiar planszy kwadratowy, a okno canvas w przeglądarce nie
-        będzie kwadratowe, rysunki będą skalowane osobno do osi X i Y, więc efekt może mieć różne
-        skale na obu osiach.
+    procedury grafiki żółwia / języka Logo (WebGL)
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -101,9 +96,13 @@
         STARTING_DIRECTION = 0;
 
         // rozmiar planszy po której porusza się gracz
-        // (nie ma związku z rozmiarem canvas w pikselach)
-        MIN_X = -100, MAX_X = 100;
-        MIN_Y = -100, MAX_Y = 100;
+        // domyslnie rozmiar jest canvas w pikselach, ponieważ pozwala to zachować stosunek
+        // skali pionowej do poziomej
+        // (można ustawić własne granice poniżej)
+        var MIN_X; // = -100;
+        var MAX_X; // = 100;
+        var MIN_Y; // = -100;
+        var MAX_Y; // = 100;
 
         // globalna zmienna przechowująca instancję klasy Turtle
         var turtle;
@@ -124,6 +123,12 @@
             gl.canvas.width = gl.canvas.clientWidth;
             gl.canvas.height = gl.canvas.clientHeight;
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            MIN_X = (MIN_X ? MIN_X : -(gl.canvas.width / 2));
+            MAX_X = (MAX_X ? MAX_X : gl.canvas.width / 2);
+            MIN_Y = (MIN_Y ? MIN_Y : -(gl.canvas.height / 2));
+            MAX_Y = (MAX_Y ? MAX_Y : gl.canvas.height / 2);
+
             // ustawienie koloru tła na biały
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -290,20 +295,18 @@
              */
             run() {
                 this.gl.clear(gl.COLOR_BUFFER_BIT);
-                this.__renderElement(this.__polygon.bind(this), [5, 40], [1, 0, 0]);
+                this.__renderElement(this.__polygon.bind(this), [5, 200], [1, 0, 0]);
                 this.__right(120);
-                this.__forward(20);
-                this.__renderElement(this.__polygon.bind(this), [3, 30], [0, 1, 0]);
+                this.__forward(100);
+                this.__renderElement(this.__polygon.bind(this), [3, 150], [0, 1, 0]);
                 this.__right(120);
-                this.__forward(50);
-                this.__renderElement(this.__polygon.bind(this), [6, 20], [0, 0, 1]);
+                this.__forward(250);
+                this.__renderElement(this.__polygon.bind(this), [6, 100], [0, 0, 1]);
                 this.__right(190);
-                this.__forward(15);
-                this.__renderElement(this.__polygon.bind(this), [4, 35], [0, 1, 1]);
+                this.__forward(75);
+                this.__renderElement(this.__polygon.bind(this), [4, 175], [0, 1, 1]);
                 // this.__renderAll();
             }
-
-
         }
     </script>
 </body>

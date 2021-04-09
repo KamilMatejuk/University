@@ -6,7 +6,9 @@
     
     Część Druga
     Po uruchomieniu należy podać wymiary planszy w formacie (MIN_X MAX_X MIN_Y MAX_Y)
-    Uwaga: rozmiar planszy nie jest powiązny z fizycznym rozmiarem canvas w przeglądarce,
+    Domyslny rozmiar to dokładne wymiary planszy w pikselach
+
+    Uwaga: rozmiar planszy nie musi być powiązny z fizycznym rozmiarem canvas w przeglądarce,
         dlatego jeżeli podamy rozmiar planszy kwadratowy, a okno canvas w przeglądarce nie
         będzie kwadratowe, rysunki będą skalowane osobno do osi X i Y, więc efekt może mieć różne
         skale na obu osiach.
@@ -141,7 +143,7 @@
     <script>
 
         // po załadowaniu urychamiana jest metoda getConstants()
-        window.onload = getConstants;
+        window.onload = init;
 
         // globalna zmienna przechowująca instancję klasy Turtle
         var turtle;
@@ -155,9 +157,13 @@
         STARTING_DIRECTION = 0;
 
         // rozmiar planszy po której porusza się gracz
-        // (nie ma związku z rozmiarem canvas w pikselach)
-        MIN_X = -100, MAX_X = 100;
-        MIN_Y = -100, MAX_Y = 100;
+        // domyslnie rozmiar jest canvas w pikselach, ponieważ pozwala to zachować stosunek
+        // skali pionowej do poziomej
+        // (można ustawić własne granice poniżej)
+        var MIN_X; // = -100;
+        var MAX_X; // = 100;
+        var MIN_Y; // = -100;
+        var MAX_Y; // = 100;
 
         function getConstants() {
             // pobrać od uzytkownika wymiary planszy
@@ -223,10 +229,6 @@
             }
             getBoundries();
             getColor();
-            // zainicjalizować WebGL
-            init();
-            // dodać listenera do inputu
-            addListener();
         }
 
         // dodanie listenera do inputu, oraz uruchomienie odpowiedniej funkcji
@@ -278,6 +280,13 @@
             gl.canvas.width = gl.canvas.clientWidth;
             gl.canvas.height = gl.canvas.clientHeight;
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            
+            MIN_X = (MIN_X ? MIN_X : parseInt(-(gl.canvas.width / 2)));
+            MAX_X = (MAX_X ? MAX_X : parseInt(gl.canvas.width / 2));
+            MIN_Y = (MIN_Y ? MIN_Y : parseInt(-(gl.canvas.height / 2)));
+            MAX_Y = (MAX_Y ? MAX_Y : parseInt(gl.canvas.height / 2));
+            getConstants();
+            
             // ustawienie koloru tła na biały
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -330,6 +339,8 @@
             // utworzenie instancji obiektu Turtle, na podstawie
             // kontekstu gl i buffora
             turtle = new Turtle(gl, compoundBuffer);
+            // dodanie listenera
+            addListener();
         }
 
 

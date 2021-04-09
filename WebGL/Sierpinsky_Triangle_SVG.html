@@ -1,0 +1,158 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 1, Zadanie 3
+    
+    Część Pierwsza - Trójkąt Sierpińskiego (SVG)
+    Po uruchomieniu należy wybrać stopień suwakiem na górze strony
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 3.1</title>
+</head>
+
+<body>
+    <!-- podstawowe stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: 5vh 1fr;
+        }
+
+        #svg {
+            width: 95vw;
+            height: 92.5vh;
+            margin: 0 auto;
+            border: 1px solid #000000;
+        }
+
+        section {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1.3rem;
+        }
+
+        input {
+            margin-left: 5vw;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <section>
+        <p id="deg_text">Wybrany stopień: 1</p>
+        <input id="input" type="range" min=0, max=8, step=1>
+    </section>
+    <svg id="svg"></svg>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+
+        // po załadowaniu urychamiana jest metoda main()
+        window.onload = main;
+
+        // stopień trójkąta
+        MIN_DEGREE = 1, MAX_DEGREE = 7;
+        DEGREE = 1;
+
+        // wymiary canvas
+        var WIDTH, HEIGHT;
+        var svg;
+
+        // dodanie listenera do slidera, oraz rysowanie od nowa
+        // po każdej zmianie
+        function addListener() {
+            const text = document.getElementById("deg_text");
+            const input = document.getElementById("input");
+            input.min = MIN_DEGREE;
+            input.max = MAX_DEGREE;
+            input.value = DEGREE;
+            input.addEventListener("input", (event) => {
+                const d = input.value;
+                text.innerHTML = `Wybrany stopień: ${d}`;
+                DEGREE = d;
+                // narysowanie trójkąta
+                sierpinskiTriangle();
+            });
+        }
+
+        function main() {
+            addListener();
+            // pobranie obiektu svg
+            svg = document.getElementById('svg');
+            WIDTH = svg.clientWidth;
+            HEIGHT = svg.clientHeight;
+            // narysowanie trójkąta
+            sierpinskiTriangle();
+        }
+
+        // wygenerowanie obiektu linii z (x1, y1) do (x2, y2)
+        function line(x1, y1, x2, y2) {
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke: #000; stroke-width: 2;" />`;
+        }
+
+        // wyliczenie współrzędnych punktu będącego pośrodku pomiędzy (x1, y1) a (x2, y2)
+        function centerPoint(x1, y1, x2, y2) {
+            return [
+                (x1 + x2) / 2,
+                (y1 + y2) / 2
+            ]
+        }
+
+        // narysowanie trójkąta w większym trójkącie i wywołanie rekurencyjne
+        // dla kolejnych 3 trójkątów
+        function triangle(point1, point2, point3, deg = DEGREE) {
+            const point4 = centerPoint(...point1, ...point2);
+            const point5 = centerPoint(...point2, ...point3);
+            const point6 = centerPoint(...point3, ...point1);
+            var lines = line(...point4, ...point5) +
+                line(...point5, ...point6) +
+                line(...point4, ...point6);
+            if (deg > 1) {
+                lines += triangle(point1, point4, point6, deg - 1);
+                lines += triangle(point4, point2, point5, deg - 1);
+                lines += triangle(point6, point5, point3, deg - 1);
+            }
+            return lines;
+        }
+
+        // narysowanie formacji trójkąta Sierpińskiego
+        // wypełniającego ~ 90% przestrzeni
+        function sierpinskiTriangle() {
+            svg.innerHTML = '';
+            const size = 0.9 * Math.min(WIDTH, HEIGHT);
+            const point1 = [
+                (WIDTH - size) / 2,
+                (HEIGHT + (Math.sqrt(3) * size / 2)) / 2
+            ]
+            const point2 = [
+                point1[0] + size,
+                point1[1]
+            ]
+            const point3 = [
+                point1[0] + (size / 2),
+                point1[1] - (Math.sqrt(3) * size / 2)
+            ]
+            svg.innerHTML += line(...point1, ...point2);
+            svg.innerHTML += line(...point2, ...point3);
+            svg.innerHTML += line(...point3, ...point1);
+            svg.innerHTML += triangle(point1, point2, point3);
+        }
+    </script>
+</body>
+
+</html>

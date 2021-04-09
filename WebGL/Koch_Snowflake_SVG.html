@@ -1,0 +1,170 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 1, Zadanie 3
+    
+    Część Druga - Płatek Kocha (SVG)
+    Po uruchomieniu należy wybrać stopień suwakiem na górze strony
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 3.2</title>
+</head>
+
+<body>
+    <!-- podstawowe stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: 5vh 1fr;
+        }
+
+        #svg {
+            width: 95vw;
+            height: 92.5vh;
+            margin: 0 auto;
+            border: 1px solid #000000;
+        }
+
+        section {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1.3rem;
+        }
+
+        input {
+            margin-left: 5vw;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <section>
+        <p id="deg_text">Wybrany stopień: 1</p>
+        <input id="input" type="range" min=0, max=8, step=1>
+    </section>
+    <svg id="svg"></svg>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+
+        // po załadowaniu urychamiana jest metoda main()
+        window.onload = main;
+
+        // stopień trójkąta
+        MIN_DEGREE = 1, MAX_DEGREE = 6;
+        DEGREE = 1;
+
+        // wymiary canvas
+        var WIDTH, HEIGHT;
+        var svg;
+
+        // dodanie listenera do slidera, oraz rysowanie od nowa
+        // po każdej zmianie
+        function addListener() {
+            const text = document.getElementById("deg_text");
+            const input = document.getElementById("input");
+            input.min = MIN_DEGREE;
+            input.max = MAX_DEGREE;
+            input.value = DEGREE;
+            input.addEventListener("input", (event) => {
+                const d = input.value;
+                text.innerHTML = `Wybrany stopień: ${d}`;
+                DEGREE = d;
+                // narysowanie trójkąta
+                kochSnowflake();
+            });
+        }
+
+        function main() {
+            addListener();
+            // pobranie obiektu svg
+            svg = document.getElementById('svg');
+            WIDTH = svg.clientWidth;
+            HEIGHT = svg.clientHeight;
+            // narysowanie trójkąta
+            kochSnowflake();
+        }
+
+        // wygenerowanie obiektu linii z (x1, y1) do (x2, y2)
+        function line(x1, y1, x2, y2) {
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke: #000; stroke-width: 2;" />`;
+        }
+
+        // wyliczenie współrzędnych punktów leżących w 1/3 i 2/3 odległości
+        // pomiędzy (x1, y1) a (x2, y2)
+        function twoPoints(x1, y1, x2, y2) {
+            return [
+                [
+                    (2 * x1 + x2) / 3,
+                    (2 * y1 + y2) / 3,
+                ],
+                [
+                    (x1 + 2 * x2) / 3,
+                    (y1 + 2 * y2) / 3,
+                ]
+            ]
+        }
+
+        // rekurencyjne narysowanie boku płatka Kocha
+        function kochLine(point1, point2, deg = DEGREE) {
+            if (deg == 1) {
+                return line(...point1, ...point2);
+            }
+            const [point3, point4] = twoPoints(...point1, ...point2);
+            const [x1, y1] = point3;
+            const [x2, y2] = point4;
+            // punkt po środku pomiędzy (x1, y1) i (x2, y2)
+            const middle = [(x1 + x2) / 2, (y1 + y2) / 2]
+            // wektor prostopadły
+            const normal_vector = [y2 - y1, x1 - x2]
+            // powstały nowy punkt gwiazdy
+            const point5 = [
+                middle[0] - normal_vector[0] * 0.86603,
+                middle[1] - normal_vector[1] * 0.86603,
+            ]
+            return kochLine(point1, point3, deg - 1) +
+                kochLine(point3, point5, deg - 1) +
+                kochLine(point5, point4, deg - 1) +
+                kochLine(point4, point2, deg - 1);
+        }
+
+        // narysowanie formacji płatka Kocha
+        // wypełniającej ~ 90% przestrzeni
+        function kochSnowflake() {
+            svg.innerHTML = '';
+            const size = 0.7 * Math.min(WIDTH, HEIGHT);
+            const point1 = [
+                (WIDTH - size) / 2,
+                (HEIGHT + 0.8 * (Math.sqrt(3) * size / 2)) / 2
+            ]
+            const point2 = [
+                point1[0] + size,
+                point1[1]
+            ]
+            const point3 = [
+                point1[0] + (size / 2),
+                point1[1] - (Math.sqrt(3) * size / 2)
+            ]
+            svg.innerHTML += kochLine(point1, point2);
+            svg.innerHTML += kochLine(point2, point3);
+            svg.innerHTML += kochLine(point3, point1);
+        }
+    </script>
+</body>
+
+</html>
