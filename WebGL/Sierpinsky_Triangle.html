@@ -128,24 +128,6 @@
             });
         }
 
-        // // pobranie od użytkownika stopnia fraktala
-        // function getDegree() {
-        //     var err = 'Niepoprawna wartość';
-        //     var deg = prompt(`Podaj stopień Trójkąt Sierpińskiego (pomiędzy ${MIN_DEGREE} a ${MAX_DEGREE})`, `${DEGREE}`);
-        //     if (deg != null && deg != "") {
-        //         var d = parseInt(deg.toString().toLowerCase());
-        //         err = 'Podaj wartość naturalną w zakresie';
-        //         if (!isNaN(d) && MIN_DEGREE <= d && d <= MAX_DEGREE) {
-        //             DEGREE = d;
-        //             // zainicjalizować WebGL
-        //             init();
-        //             return;
-        //         }
-        //     }
-        //     console.error(err);
-        //     getDegree();
-        // }
-
         // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
         function init() {
             addListener();
