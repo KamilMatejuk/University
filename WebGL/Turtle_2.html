@@ -162,17 +162,17 @@
         function getConstants() {
             // pobrać od uzytkownika wymiary planszy
             function getBoundries() {
-                var err = 'Incorrect value';
+                var err = 'Zła wartość';
                 var boundries = prompt("Podaj wymiary planszy, oddzielone spacjami (MIN_X MAX_X MIN_Y MAX_Y)", `${MIN_X} ${MAX_X} ${MIN_Y} ${MAX_Y}`);
                 if (boundries != null && boundries != "") {
                     var b = boundries.toString().toLowerCase().split(" ");
-                    err = 'You need to specify 4 values, divided by space';
+                    err = 'Podaj 4 wartości oddzielone spacją';
                     if (b.length == 4) {
                         min_x = parseInt(b[0], 10);
                         max_x = parseInt(b[1], 10);
                         min_y = parseInt(b[2], 10);
                         max_y = parseInt(b[3], 10);
-                        err = 'Values have to be integers, and MIN < MAX'
+                        err = 'Podaj wartości całkowite i  MIN < MAX'
                         if (
                             !isNaN(min_x) &&
                             !isNaN(max_x) &&
@@ -194,16 +194,16 @@
             }
             // pobrać od uzytkownika wymiary kolor
             function getColor() {
-                var err = 'Incorrect value';
+                var err = 'Zła wartość';
                 var boundries = prompt("Podaj kolor RBG (skala 0-1), oddzielon spacjami (R B G)", `${STARTING_COLOR.join(' ')}`);
                 if (boundries != null && boundries != "") {
                     var b = boundries.toString().toLowerCase().split(" ");
-                    err = 'You need to specify 3 values, divided by space';
+                    err = 'Podaj 3 wartości oddzielone spacją';
                     if (b.length == 3) {
                         r = parseFloat(b[0], 10);
                         g = parseFloat(b[1], 10);
                         b = parseFloat(b[2], 10);
-                        err = 'Values have to be integers, and MIN < MAX'
+                        err = 'Podaj wartości całkowite i MIN < MAX'
                         if (
                             !isNaN(min_x) &&
                             !isNaN(max_x) &&
@@ -258,7 +258,6 @@
                         case('right'):      turtle.__right(v_arr[1]);   break;
                     }
                     turtle.__renderAll();
-                    console.log(turtle.last_direction);
                 }
             });
         }
@@ -376,7 +375,6 @@
              * w którym aktualnie jest zwrócony gracz
              */
             __forward(distance) {
-                console.log(this.points)
                 // poprzedni punkt
                 var [start_x, start_y, r, g, b] = this.points.slice(-1)[0];
                 // kierunek w radianach
