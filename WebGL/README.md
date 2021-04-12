@@ -7,11 +7,11 @@
 * `3D Logo` [Turtle_3D](#turtle-3d)
 
 ## Topics
-### Koch_Snowflake
+### Koch Snowflake
 Draw a 2D fractal of [Koch Snowflake](https://en.wikipedia.org/wiki/Koch_snowflake) of degree specified by user.
 First program uses simple `SVG`, second one `WebGL`.
 
-### Sierpinsky_Triangle
+### Sierpinsky Triangle
 Draw a 2D fractal of [Sierpinsky Triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle) of degree specified by user.
 First program uses simple `SVG`, second one `WebGL`.
 
