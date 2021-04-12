@@ -1,0 +1,716 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 1, Zadanie 4
+
+    Gra polega na ominięciu przeszkód i dotarciu do czerwonego punktu na końcu trasy.
+
+    Konytole są pokazane na dole ekranu:
+        Strzałka do góry    ->     idź do przodu,
+        Strzałka w dół      ->     idź do tyłu,
+        Strzałka w prawo    ->     idź w prawo,
+        Strzałka w lewo     ->     idź w lewo,
+        W                   ->     idź do góry
+        S                   ->     idź do dołu
+
+    W prawym dolnym rogu ekranu można włączyć / wyłączyć widok wire-frame
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 4</title>
+</head>
+
+<body>
+    <!-- podstawowe stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 1fr 200px;
+        }
+
+        #canvas {
+            border-bottom: 1px black solid;
+            width: 100vw;
+            height: 100%;
+        }
+
+        aside {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: 100px repeat(3, 50px) 100px;
+            grid-template-rows: repeat(3, 50px);
+            grid-template-areas:
+                "W_desc W_desc W_desc W_desc W_desc"
+                "blank1 blank1 W_key  blank2 blank2"
+                "A_desc A_key  S_key  D_key  D_desc"
+                "S_desc S_desc S_desc S_desc S_desc";
+        }
+
+        .keyboard>* {
+            width: 100%;
+            height: 50px;
+            text-align: center;
+        }
+
+        .key {
+            background: #6e6e6e;
+            color: #fff;
+            line-height: 50px;
+            border: 1px solid #fff;
+        }
+
+        #W_key {
+            grid-area: W_key;
+        }
+
+        #W_desc {
+            grid-area: W_desc;
+            line-height: 70px;
+        }
+
+        #S_key {
+            grid-area: S_key;
+        }
+
+        #S_desc {
+            grid-area: S_desc;
+        }
+
+        #Left_key {
+            grid-area: A_key;
+        }
+
+        #Left_desc {
+            grid-area: A_desc;
+            line-height: 50px;
+        }
+
+        #Up_key {
+            grid-area: W_key;
+        }
+
+        #Up_desc {
+            grid-area: W_desc;
+            line-height: 70px;
+        }
+
+        #Down_key {
+            grid-area: S_key;
+        }
+
+        #Down_desc {
+            grid-area: S_desc;
+        }
+
+        #Right_key {
+            grid-area: D_key;
+        }
+
+        #Right_desc {
+            grid-area: D_desc;
+            line-height: 50px;
+        }
+
+        .checks {
+            display: grid;
+            grid-template-columns: 20px 1fr;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas"></canvas>
+    <aside>
+        <div class="keyboard">
+            <p id="W_key" class="key">W</p>
+            <p id="W_desc">Idź w górę</p>
+            <p id="S_key" class="key">S</p>
+            <p id="S_desc">Idź w dół</p>
+        </div>
+        <div class="keyboard">
+            <div id="Left_key" class="key">&lt;</div>
+            <p id="Left_desc">Idź w lewo</p>
+            <p id="Up_key" class="key">/\</p>
+            <p id="Up_desc">Idź do przodu</p>
+            <p id="Down_key" class="key">\/</p>
+            <p id="Down_desc">Idź do tyłu</p>
+            <p id="Right_key" class="key">&gt;</p>
+            <p id="Right_desc">Idź w prawo</p>
+        </div>
+        <div class="checks">
+            <input type="checkbox" id="wire" name="wire" checked>
+            <label for="wire">Wire-frame</label>
+        </div>
+    </aside>
+
+    <!-- tekst VertexShadera -->
+    <script id="vs" type="x-shader/x-vertex">
+        precision mediump float;
+
+        attribute vec4 aVertexPosition;
+        attribute vec4 aVertexColor;
+
+        uniform mat4 uVertexMatrix;
+
+        varying vec4 fragColor;
+
+        void main() {
+            gl_Position = uVertexMatrix * aVertexPosition;
+            fragColor = aVertexColor;
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec4 fragColor;
+
+        void main() {
+            gl_FragColor = fragColor;
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+
+        // po załadowaniu urychamiana jest metoda init()
+        window.onload = init;
+
+        // domyślny kolor
+        EDGE_COLOR = [0, 0, 0, 255];
+        PLAIN_COLOR = [0, 0, 0, 10];
+        // kolor celu
+        TARGET_COLOR = [255, 0, 0, 255];
+
+        // ilość przeszkód
+        OBSTACLES_N = 20;
+        var obstacles = generateObstacles();
+
+        // ilość przesnięcia w jednym kliknięciu
+        STEP_MOVEMENT = 10;
+
+        // domyslny stan checkboxa wire-frame
+        WIRE_CHECKBOX = true;
+
+        // pole widzenia i ustawienie kamery
+        CAMERA_DISTANCE = 0;
+        var cameraPosition = [0, 0, CAMERA_DISTANCE]; // [x, y, z]
+        var fieldOfViewRadians = 75 * Math.PI / 180;
+
+        // dodanie listenera do kontoli poprzez klawiaturę
+        document.addEventListener("keydown", (e) => {
+            // dostępne ruchy
+            moves = {
+                'ArrowUp': [2, -STEP_MOVEMENT, Number.MAX_VALUE],   // przód
+                'ArrowDown': [2, STEP_MOVEMENT, Number.MAX_VALUE],  // tył
+                'ArrowLeft': [0, -STEP_MOVEMENT, canvas.width / 2], // lewo
+                'ArrowRight': [0, STEP_MOVEMENT, canvas.width / 2], // prawo
+                'w': [1, STEP_MOVEMENT, canvas.height / 2],         // góra
+                's': [1, -STEP_MOVEMENT, canvas.height / 2],        // dół
+            }
+            // wywołanie akcji przesunięcia
+            var [index, step, range] = moves[e.key] || [null, null, null];
+            if (index != null && step != null && range != null) {
+                e.preventDefault();
+                const new_p = cameraPosition[index] + step;
+                if (new_p > -range && new_p < range) {
+                    cameraPosition[index] += step;
+                    drawScene();
+                }
+            }
+        });
+
+        // dodanie listenera do checkboxa wire-frame
+        var wire_chbx = document.getElementById('wire');
+        wire_chbx.checked = WIRE_CHECKBOX;
+        wire_chbx.addEventListener('click', (e) => {
+            WIRE_CHECKBOX = e.target.checked;
+            drawScene();
+        });
+
+        // wygenerowanie przeszkód (prostopadłościanów)
+        // o losowych wymiarach w losowych miejscach
+        // wzdłóż osi z
+        function generateObstacles() {
+            var randomInt = (min, max) => Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min);
+            var s = Math.min(canvas.width, canvas.height);
+            var min = 0.2 * s, max = 0.5 * s;
+            // cel
+            var obstacles = [[
+                canvas.width / 2, canvas.height / 2, 0,
+                min / 4, min / 4, min / 4
+            ]];
+            var z = 0;
+            // reszta obiektów
+            for (var i = 0; i < OBSTACLES_N; i++) {
+                var w = randomInt(min, 2 * max);    // width
+                var h = randomInt(min, 2 * max);    // height
+                var d = randomInt(min, 2 * max);    // depth
+                z -= randomInt(min, max);
+                obstacles.push([
+                    randomInt(-canvas.width, canvas.width - w),    // x
+                    randomInt(-canvas.height, canvas.height - h),  // y
+                    z, w, h, d]);
+            }
+            return obstacles;
+        }
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            // pobranie canvas i WebGL Context
+            canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // inicjalizacja i kompilacja VertexShadera
+            const vsSource = document.getElementById('vs').firstChild.nodeValue;
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vsSource);
+            gl.compileShader(vertexShader);
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fsSource = document.getElementById('fs').firstChild.nodeValue;
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fsSource);
+            gl.compileShader(fragmentShader);
+
+            // dołączenie shaderów do programu
+            program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+
+            gl.useProgram(program);
+
+            // załadowanie buffora
+            positionLocation = gl.getAttribLocation(program, "aVertexPosition");
+            colorLocation = gl.getAttribLocation(program, "aVertexColor");
+            matrixLocation = gl.getUniformLocation(program, "uVertexMatrix");
+
+            // stworzenie i wypełnienie bufora pozycji
+            positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            setGeometry(gl);
+
+            // stworzenie i wypełnienie bufora kolorów
+            colorBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            setColors(gl);
+
+            drawScene();
+        }
+
+        // narysowanie sceny 3D
+        function drawScene() {
+            // aktualizacja rozmiaru okna
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.enable(gl.DEPTH_TEST);
+
+            gl.enableVertexAttribArray(positionLocation);
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.vertexAttribPointer(
+                positionLocation,
+                3,          // pobierz 3 wartości w każdej iteracji
+                gl.FLOAT,   // typ float
+                false,      // bez normalizacji
+                0,          // rozmiar jednej iteracji
+                0);         // przesunięcie w ramach iteracji
+
+            gl.enableVertexAttribArray(colorLocation);
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.vertexAttribPointer(
+                colorLocation,
+                4,                  // pobierz 3 wartości w każdej iteracji
+                gl.UNSIGNED_BYTE,   // typ float
+                true,               // z normalizacjią
+                0,                  // rozmiar jednej iteracji
+                0);                 // przesunięcie w ramach iteracji
+
+            // stworzenie macierzy projekcji
+            var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            var projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
+            // stworzenie macierzy kamery
+            var cameraMatrix = m4.translate(
+                m4.identity,
+                cameraPosition[0],
+                cameraPosition[1],
+                cameraPosition[2]
+            );
+            // połączenie macierzy projekci z odwróconą macierzą kamery 
+            var viewMatrix = m4.inverse(cameraMatrix);
+            var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+            // narysowanie każdej z przeszkód
+            obstacles.slice().reverse().forEach((o, i) => {
+                var matrix = m4.translate(viewProjectionMatrix, o[0], o[1], o[2]);
+                gl.uniformMatrix4fv(matrixLocation, false, matrix);
+                var allOffset = i * 52;
+                if (!WIRE_CHECKBOX) {
+                    gl.drawArrays(gl.TRIANGLES, offset = allOffset + 16, count = 36);
+                }
+                gl.drawArrays(gl.LINE_LOOP, offset = allOffset, count = 16);
+            });
+        }
+
+        // wypełnienie bufora punktami odpowiadającymi odpowiedniej ilości przeszkód 
+        function setGeometry(gl) {
+            // punkty odpowiadające jednemu prostopadłościanowi
+            function cuboid(width, height, depth) {
+                return [
+                    // krawędzie
+                    -width / 2, -height / 2, -depth / 2,
+                    -width / 2, height / 2, -depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    -width / 2, height / 2, -depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    width / 2, -height / 2, -depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    -width / 2, -height / 2, depth / 2,
+                    // boki
+                    // 1
+                    -width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    -width / 2, height / 2, -depth / 2,
+                    -width / 2, -height / 2, -depth / 2,
+                    // 2
+                    width / 2, -height / 2, -depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    width / 2, -height / 2, -depth / 2,
+                    // 3
+                    -width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, -depth / 2,
+                    // 4
+                    -width / 2, height / 2, -depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    -width / 2, height / 2, -depth / 2,
+                    // 5
+                    -width / 2, -height / 2, -depth / 2,
+                    -width / 2, height / 2, -depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    width / 2, height / 2, -depth / 2,
+                    width / 2, -height / 2, -depth / 2,
+                    -width / 2, -height / 2, -depth / 2,
+                    // 6
+                    -width / 2, -height / 2, depth / 2,
+                    -width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, height / 2, depth / 2,
+                    width / 2, -height / 2, depth / 2,
+                    -width / 2, -height / 2, depth / 2,
+                ];
+            }
+            var positions = obstacles.flatMap((o) => cuboid(o[3], o[4], o[5]))
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+        }
+
+        // wypełnienie bufora kolorami odpowiadającymi przeszkodom i celowi 
+        function setColors(gl) {
+            // kolory odpowiadające jednemu prostopadłościanowi
+            function cuboidColor(target = false) {
+                var e_color = (target ? TARGET_COLOR : EDGE_COLOR);
+                var p_color = (target ? TARGET_COLOR : PLAIN_COLOR);
+
+                var edge_colors = new Array(16).fill(0).flatMap((i) => e_color);
+                var plane_colors = new Array(36).fill(0).flatMap((i) => p_color);
+                return edge_colors.concat(plane_colors);
+            }
+            var colors = obstacles.slice(1).flatMap((o) => cuboidColor())
+            colors = cuboidColor(true).concat(colors);
+            gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
+        }
+
+
+
+        /**
+         * *****************************************************************************************
+         * *****************************************************************************************
+         * *************  obiekt pozwalający wykonywać operacje na macierzach (4 x 4)  *************
+         * *****************************************************************************************
+         * *****************************************************************************************
+         */
+        var m4 = {
+            identity: [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
+            ],
+            perspective: function (fieldOfViewInRadians, aspect, near, far) {
+                var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+                var rangeInv = 1.0 / (near - far);
+
+                return [
+                    f / aspect, 0, 0, 0,
+                    0, f, 0, 0,
+                    0, 0, (near + far) * rangeInv, -1,
+                    0, 0, near * far * rangeInv * 2, 0
+                ];
+            },
+            projection: function (width, height, depth) {
+                return [
+                    2 / width, 0, 0, 0,
+                    0, -2 / height, 0, 0,
+                    0, 0, 2 / depth, 0,
+                    -1, 1, 0, 1,
+                ];
+            },
+            multiply: function (a, b) {
+                var a00 = a[0 * 4 + 0];
+                var a01 = a[0 * 4 + 1];
+                var a02 = a[0 * 4 + 2];
+                var a03 = a[0 * 4 + 3];
+                var a10 = a[1 * 4 + 0];
+                var a11 = a[1 * 4 + 1];
+                var a12 = a[1 * 4 + 2];
+                var a13 = a[1 * 4 + 3];
+                var a20 = a[2 * 4 + 0];
+                var a21 = a[2 * 4 + 1];
+                var a22 = a[2 * 4 + 2];
+                var a23 = a[2 * 4 + 3];
+                var a30 = a[3 * 4 + 0];
+                var a31 = a[3 * 4 + 1];
+                var a32 = a[3 * 4 + 2];
+                var a33 = a[3 * 4 + 3];
+                var b00 = b[0 * 4 + 0];
+                var b01 = b[0 * 4 + 1];
+                var b02 = b[0 * 4 + 2];
+                var b03 = b[0 * 4 + 3];
+                var b10 = b[1 * 4 + 0];
+                var b11 = b[1 * 4 + 1];
+                var b12 = b[1 * 4 + 2];
+                var b13 = b[1 * 4 + 3];
+                var b20 = b[2 * 4 + 0];
+                var b21 = b[2 * 4 + 1];
+                var b22 = b[2 * 4 + 2];
+                var b23 = b[2 * 4 + 3];
+                var b30 = b[3 * 4 + 0];
+                var b31 = b[3 * 4 + 1];
+                var b32 = b[3 * 4 + 2];
+                var b33 = b[3 * 4 + 3];
+                return [
+                    b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30,
+                    b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31,
+                    b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32,
+                    b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33,
+                    b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30,
+                    b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31,
+                    b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32,
+                    b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33,
+                    b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30,
+                    b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31,
+                    b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32,
+                    b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33,
+                    b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30,
+                    b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31,
+                    b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32,
+                    b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33,
+                ];
+            },
+            translation: function (tx, ty, tz) {
+                return [
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    tx, ty, tz, 1,
+                ];
+            },
+            xRotation: function (angleInRadians) {
+                var c = Math.cos(angleInRadians);
+                var s = Math.sin(angleInRadians);
+                return [
+                    1, 0, 0, 0,
+                    0, c, s, 0,
+                    0, -s, c, 0,
+                    0, 0, 0, 1,
+                ];
+            },
+            yRotation: function (angleInRadians) {
+                var c = Math.cos(angleInRadians);
+                var s = Math.sin(angleInRadians);
+                return [
+                    c, 0, -s, 0,
+                    0, 1, 0, 0,
+                    s, 0, c, 0,
+                    0, 0, 0, 1,
+                ];
+            },
+            zRotation: function (angleInRadians) {
+                var c = Math.cos(angleInRadians);
+                var s = Math.sin(angleInRadians);
+                return [
+                    c, s, 0, 0,
+                    -s, c, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1,
+                ];
+            },
+            scaling: function (sx, sy, sz) {
+                return [
+                    sx, 0, 0, 0,
+                    0, sy, 0, 0,
+                    0, 0, sz, 0,
+                    0, 0, 0, 1,
+                ];
+            },
+            translate: function (m, tx, ty, tz) {
+                return m4.multiply(m, m4.translation(tx, ty, tz));
+            },
+            xRotate: function (m, angleInRadians) {
+                return m4.multiply(m, m4.xRotation(angleInRadians));
+            },
+            yRotate: function (m, angleInRadians) {
+                return m4.multiply(m, m4.yRotation(angleInRadians));
+            },
+            zRotate: function (m, angleInRadians) {
+                return m4.multiply(m, m4.zRotation(angleInRadians));
+            },
+            scale: function (m, sx, sy, sz) {
+                return m4.multiply(m, m4.scaling(sx, sy, sz));
+            },
+            inverse: function (m) {
+                var m00 = m[0 * 4 + 0];
+                var m01 = m[0 * 4 + 1];
+                var m02 = m[0 * 4 + 2];
+                var m03 = m[0 * 4 + 3];
+                var m10 = m[1 * 4 + 0];
+                var m11 = m[1 * 4 + 1];
+                var m12 = m[1 * 4 + 2];
+                var m13 = m[1 * 4 + 3];
+                var m20 = m[2 * 4 + 0];
+                var m21 = m[2 * 4 + 1];
+                var m22 = m[2 * 4 + 2];
+                var m23 = m[2 * 4 + 3];
+                var m30 = m[3 * 4 + 0];
+                var m31 = m[3 * 4 + 1];
+                var m32 = m[3 * 4 + 2];
+                var m33 = m[3 * 4 + 3];
+                var tmp_0 = m22 * m33;
+                var tmp_1 = m32 * m23;
+                var tmp_2 = m12 * m33;
+                var tmp_3 = m32 * m13;
+                var tmp_4 = m12 * m23;
+                var tmp_5 = m22 * m13;
+                var tmp_6 = m02 * m33;
+                var tmp_7 = m32 * m03;
+                var tmp_8 = m02 * m23;
+                var tmp_9 = m22 * m03;
+                var tmp_10 = m02 * m13;
+                var tmp_11 = m12 * m03;
+                var tmp_12 = m20 * m31;
+                var tmp_13 = m30 * m21;
+                var tmp_14 = m10 * m31;
+                var tmp_15 = m30 * m11;
+                var tmp_16 = m10 * m21;
+                var tmp_17 = m20 * m11;
+                var tmp_18 = m00 * m31;
+                var tmp_19 = m30 * m01;
+                var tmp_20 = m00 * m21;
+                var tmp_21 = m20 * m01;
+                var tmp_22 = m00 * m11;
+                var tmp_23 = m10 * m01;
+                var t0 = (tmp_0 * m11 + tmp_3 * m21 + tmp_4 * m31) -
+                    (tmp_1 * m11 + tmp_2 * m21 + tmp_5 * m31);
+                var t1 = (tmp_1 * m01 + tmp_6 * m21 + tmp_9 * m31) -
+                    (tmp_0 * m01 + tmp_7 * m21 + tmp_8 * m31);
+                var t2 = (tmp_2 * m01 + tmp_7 * m11 + tmp_10 * m31) -
+                    (tmp_3 * m01 + tmp_6 * m11 + tmp_11 * m31);
+                var t3 = (tmp_5 * m01 + tmp_8 * m11 + tmp_11 * m21) -
+                    (tmp_4 * m01 + tmp_9 * m11 + tmp_10 * m21);
+                var d = 1.0 / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
+                return [
+                    d * t0, d * t1, d * t2, d * t3,
+                    d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) -
+                        (tmp_0 * m10 + tmp_3 * m20 + tmp_4 * m30)),
+                    d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) -
+                        (tmp_1 * m00 + tmp_6 * m20 + tmp_9 * m30)),
+                    d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) -
+                        (tmp_2 * m00 + tmp_7 * m10 + tmp_10 * m30)),
+                    d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) -
+                        (tmp_5 * m00 + tmp_8 * m10 + tmp_11 * m20)),
+                    d * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) -
+                        (tmp_13 * m13 + tmp_14 * m23 + tmp_17 * m33)),
+                    d * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) -
+                        (tmp_12 * m03 + tmp_19 * m23 + tmp_20 * m33)),
+                    d * ((tmp_14 * m03 + tmp_19 * m13 + tmp_22 * m33) -
+                        (tmp_15 * m03 + tmp_18 * m13 + tmp_23 * m33)),
+                    d * ((tmp_17 * m03 + tmp_20 * m13 + tmp_23 * m23) -
+                        (tmp_16 * m03 + tmp_21 * m13 + tmp_22 * m23)),
+                    d * ((tmp_14 * m22 + tmp_17 * m32 + tmp_13 * m12) -
+                        (tmp_16 * m32 + tmp_12 * m12 + tmp_15 * m22)),
+                    d * ((tmp_20 * m32 + tmp_12 * m02 + tmp_19 * m22) -
+                        (tmp_18 * m22 + tmp_21 * m32 + tmp_13 * m02)),
+                    d * ((tmp_18 * m12 + tmp_23 * m32 + tmp_15 * m02) -
+                        (tmp_22 * m32 + tmp_14 * m02 + tmp_19 * m12)),
+                    d * ((tmp_22 * m22 + tmp_16 * m02 + tmp_21 * m12) -
+                        (tmp_20 * m12 + tmp_23 * m22 + tmp_17 * m02))
+                ];
+            },
+            vectorMultiply: function (v, m) {
+                var dst = [];
+                for (var i = 0; i < 4; ++i) {
+                    dst[i] = 0.0;
+                    for (var j = 0; j < 4; ++j) {
+                        dst[i] += v[j] * m[j * 4 + i];
+                    }
+                }
+                return dst;
+            },
+        };
+    </script>
+</body>
+
+</html>
