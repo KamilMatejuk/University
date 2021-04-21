@@ -20,12 +20,12 @@ def add_compile(f):
 '''
 Run VHDL code from file f, and generate vcd file if specified
 '''
-def run(f, vcd):
+def run(f, vcd, args):
     entity = get_entity(f)
     # running
     vcd = f' --vcd={entity}.vcd' if vcd else ''
-    print(yellow(text_with_var('Running ...', f'[ghdl -r {entity}{vcd}]')))
-    os.system(f'ghdl -r {entity}{vcd}')
+    print(yellow(text_with_var('Running ...', f'[ghdl -r {entity}{vcd} {" ".join(args)}]')))
+    os.system(f'ghdl -r {entity}{vcd} {" ".join(args)}')
 
 
 '''
@@ -98,9 +98,13 @@ def bash_command(command):
             print(output)
 
 
+'''
+Center text in cmd window
+'''
 def center(text):
     _, columns = os.popen('stty size', 'r').read().split()
     return '{text:^{w}}'.format(text=text, w=columns)
+
 
 if __name__ == '__main__':
     try:
@@ -125,7 +129,8 @@ if __name__ == '__main__':
                 print(yellow(text_with_var('Removing file', f'"{f}"') + '\033[32;1mOK\033[0m'))
         
         # get list of files
-        files = [a for a in sys.argv[1:] if a not in ['--del', '--vcd']]
+        files = [a for a in sys.argv[1:] if os.path.isfile(a)]
+        arguments = [a for a in sys.argv[1:] if not os.path.isfile(a) and a not in ['--del', '--vcd']]
         if len(files) == 0:
             print('Choose file / list of files to compile and run')
             exit(1)
@@ -135,7 +140,7 @@ if __name__ == '__main__':
             add_compile(f)
         
         # run entity from last file
-        run(files[-1], '--vcd' in sys.argv)
+        run(files[-1], '--vcd' in sys.argv, arguments)
 
         # show wave file
         if '--vcd' in sys.argv:
@@ -143,4 +148,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print()
         exit(0)
-        
