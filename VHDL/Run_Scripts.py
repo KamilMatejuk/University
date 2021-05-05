@@ -8,13 +8,14 @@ import subprocess
 Compile and evaluate VHDL entity from file f
 '''
 def add_compile(f):
-    entity = get_entity(f)
     # compilation
     print(yellow(text_with_var('Compilation ...', f'[ghdl -a {f}]')), end="")
     bash_command(["ghdl", "-a", f])
     # elaboration
-    print(yellow(text_with_var('Elaboration ...', f'[ghdl -e {entity}]')), end="")
-    bash_command(["ghdl", "-e", entity])
+    entity = get_entity(f)
+    if entity is not None:
+        print(yellow(text_with_var('Elaboration ...', f'[ghdl -e {entity}]')), end="")
+        bash_command(["ghdl", "-e", entity])
 
 
 '''
