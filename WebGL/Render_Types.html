@@ -1,0 +1,503 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 2, Zadanie 1
+
+    Program pozwala na rysowanie na ekranie punktów.
+    Można wybrać kolor orraz tryb renderowania przez WebGL
+    (POINTS, LINE_STRIP, LINE_LOOP, LINES, TRIANGLE_STRIP, TRIANGLE_FAN, TRIANGLES)
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 1</title>
+</head>
+
+<body>
+    <!-- stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "monospace";
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 250px;
+        }
+
+        #canvas {
+            border: 1px black solid;
+            width: 100%;
+            height: 100vh;
+        }
+
+        aside {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .render-type,
+        .color {
+            display: grid;
+            grid-template-columns: 20px 1fr;
+        }
+
+        .render-type p,
+        .color p {
+            grid-column: 1 / 3;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .render-type input {
+            width: 80%;
+            margin: 35%;
+        }
+
+        .render-type label {
+            margin: 5px 10px;
+        }
+
+        .color label {
+            width: 80%;
+            margin: 35%;
+        }
+
+        .color input {
+            padding: 3px 10px;
+        }
+
+        #created-color {
+            grid-column: 1 / 3;
+            height: 40px;
+            width: 100%;
+            margin-top: 10px;
+            background: #000000;
+            border: 1px solid black;
+        }
+
+        /* ************************************* slider ************************************* */
+        input[type=range] {
+            height: 27px;
+            -webkit-appearance: none;
+            width: 100%;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            border: 1px solid #000000;
+            height: 20px;
+            width: 20px;
+            border-radius: 10px;
+            background: #FFFFFF;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px;
+        }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            border: 1px solid #000000;
+            height: 20px;
+            width: 20px;
+            border-radius: 10px;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        input[type=range]::-ms-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: transparent;
+            border-color: transparent;
+            color: transparent;
+        }
+
+        input[type=range]::-ms-fill-lower {
+            border-radius: 10px;
+        }
+
+        input[type=range]::-ms-fill-upper {
+            border-radius: 10px;
+        }
+
+        input[type=range]::-ms-thumb {
+            margin-top: 1px;
+            border: 1px solid #000000;
+            height: 20px;
+            width: 20px;
+            border-radius: 10px;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        /* *********************************** slider end *********************************** */
+        /* red slider */
+        #red::-webkit-slider-runnable-track {
+            background: #FF0000;
+        }
+
+        #red:focus::-webkit-slider-runnable-track {
+            background: #FF0000;
+        }
+
+        #red::-moz-range-track {
+            background: #FF0000;
+        }
+
+        #red::-ms-fill-lower {
+            background: #FF0000;
+        }
+
+        #red::-ms-fill-upper {
+            background: #FF0000;
+        }
+
+        #red:focus::-ms-fill-lower {
+            background: #FF0000;
+        }
+
+        #red:focus::-ms-fill-upper {
+            background: #FF0000;
+        }
+
+        /* green slider */
+        #green::-webkit-slider-runnable-track {
+            background: #00FF00;
+        }
+
+        #green:focus::-webkit-slider-runnable-track {
+            background: #00FF00;
+        }
+
+        #green::-moz-range-track {
+            background: #00FF00;
+        }
+
+        #green::-ms-fill-lower {
+            background: #00FF00;
+        }
+
+        #green::-ms-fill-upper {
+            background: #00FF00;
+        }
+
+        #green:focus::-ms-fill-lower {
+            background: #00FF00;
+        }
+
+        #green:focus::-ms-fill-upper {
+            background: #00FF00;
+        }
+
+        /* blue slider */
+        #blue::-webkit-slider-runnable-track {
+            background: #0000FF;
+        }
+
+        #blue:focus::-webkit-slider-runnable-track {
+            background: #0000FF;
+        }
+
+        #blue::-moz-range-track {
+            background: #0000FF;
+        }
+
+        #blue::-ms-fill-lower {
+            background: #0000FF;
+        }
+
+        #blue::-ms-fill-upper {
+            background: #0000FF;
+        }
+
+        #blue:focus::-ms-fill-lower {
+            background: #0000FF;
+        }
+
+        #blue:focus::-ms-fill-upper {
+            background: #0000FF;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas" width="512" height="512" onclick="choosenPoint(event)"></canvas>
+    <!-- opcje -->
+    <aside>
+        <div class="render-type">
+            <p>Typ renderowania</p>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="points" checked>
+            <label for="points">POINTS</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="line_strip">
+            <label for="line_strip">LINE_STRIP</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="line_loop">
+            <label for="line_loop">LINE_LOOP</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="lines">
+            <label for="lines">LINES</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="triangle_strip">
+            <label for="triangle_strip">TRIANGLE_STRIP</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="triangle_fan">
+            <label for="triangle_fan">TRIANGLE_FAN</label>
+            <input type="radio" name="type" onchange="choosenRenderType(event)" id="triangles">
+            <label for="triangles">TRIANGLES</label>
+        </div>
+        <div class="color">
+            <p>Kolor</p>
+            <label for="red">R</label>
+            <input type="range" min="0" max="255" step="1" value="0" oninput="choosenColor(event)" id="red">
+            <label for="red">G</label>
+            <input type="range" min="0" max="255" step="1" value="0" oninput="choosenColor(event)" id="green">
+            <label for="red">B</label>
+            <input type="range" min="0" max="255" step="1" value="0" oninput="choosenColor(event)" id="blue">
+            <div id="created-color"></div>
+        </div>
+    </aside>
+
+    <!-- tekst VertexShadera -->
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec2 aVertexPosition;
+
+        void main ( void ) {
+            gl_PointSize = 5.0;
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec3 uColorRGB;
+
+        void main ( void ) {
+            gl_FragColor = vec4( uColorRGB, 1.0 );
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+        var gl;
+        var shaderProgram;
+        // tryb renderowania
+        var DRAW_MODE;
+        // kolor
+        var CURRENT_COLOR_R = 0.0;
+        var CURRENT_COLOR_G = 0.0;
+        var CURRENT_COLOR_B = 0.0;
+
+        // rozmiary ekranu
+        var MIN_X, MIN_Y, MAX_X, MAX_Y;
+        // punkty
+        var ADDED_POINTS = []
+
+        // po załadowaniu urychamiana jest metoda getConstants()
+        window.onload = init;
+
+        // dodanie punktu
+        function choosenPoint(event) {
+            const canvas = document.getElementById('canvas');
+            const { width, height } = canvas.getBoundingClientRect();
+            const x = 2 * (event.layerX / width - 0.5);
+            const y = 2 * (0.5 - event.layerY / height);
+            addPoint(x, y);
+            draw()
+        }
+
+        // zmiana trybu renderowania
+        function choosenRenderType(event) {
+            switch (event.target.id) {
+                case "points":
+                    DRAW_MODE = gl.POINTS; break;
+                case "line_strip":
+                    DRAW_MODE = gl.LINE_STRIP; break;
+                case "line_loop":
+                    DRAW_MODE = gl.LINE_LOOP; break;
+                case "lines":
+                    DRAW_MODE = gl.LINES; break;
+                case "triangle_strip":
+                    DRAW_MODE = gl.TRIANGLE_STRIP; break;
+                case "triangle_fan":
+                    DRAW_MODE = gl.TRIANGLE_FAN; break;
+                case "triangles":
+                    DRAW_MODE = gl.TRIANGLES; break;
+            }
+            draw()
+        }
+
+        // zmiana koloru
+        function choosenColor(event) {
+            switch (event.target.id) {
+                case "red":
+                    CURRENT_COLOR_R = (event.target.value / 255); break;
+                case "green":
+                    CURRENT_COLOR_G = (event.target.value / 255); break;
+                case "blue":
+                    CURRENT_COLOR_B = (event.target.value / 255); break;
+            }
+            const color = document.getElementById('created-color')
+            color.style.background = `rgb(${parseInt(255 * CURRENT_COLOR_R)}, ${parseInt(255 * CURRENT_COLOR_G)}, ${parseInt(255 * CURRENT_COLOR_B)})`
+            draw()
+        }
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            // pobranie canvas i WebGL Context
+            const canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            MIN_X = parseInt(-(gl.canvas.width / 2));
+            MAX_X = parseInt(gl.canvas.width / 2);
+            MIN_Y = parseInt(-(gl.canvas.height / 2));
+            MAX_Y = parseInt(gl.canvas.height / 2);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // inicjalizacja i kompilacja VertexShadera
+            const vsSource = document.getElementById('vs').firstChild.nodeValue;
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vsSource);
+            gl.compileShader(vertexShader);
+            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(vertexShader));
+                console.log(gl);
+                return null;
+            }
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fsSource = document.getElementById('fs').firstChild.nodeValue;
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fsSource);
+            gl.compileShader(fragmentShader);
+            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(fragmentShader));
+                console.log(gl);
+                return null;
+            }
+
+            // dołączenie shaderów do programu
+            shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+
+            // https://webglfundamentals.org/webgl/lessons/webgl-attributes.html
+            // przypisanie indeksu 10 do attrybutu aVertexPosition
+            gl.bindAttribLocation(shaderProgram, 10, 'aVertexPosition')
+            
+            gl.linkProgram(shaderProgram);
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                console.log("Could not initialise shaders");
+                console.log(gl);
+                return null;
+            }
+
+            shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition')
+            shaderProgram.uColorRGB = gl.getUniformLocation(shaderProgram, 'uColorRGB')
+
+            gl.useProgram(shaderProgram);
+
+            // załadowanie buffora,
+            // przechowującego w jednej iteracji 2 floaty
+            // [ pozycja_X, pozycja_Y ]
+            shaderProgram.positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgram.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, 8 * 200, gl.DYNAMIC_DRAW);
+
+            draw()
+            info()
+        }
+
+        // narysowanie od nowa planszy po zmianach
+        function draw() {
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            // rysowanie
+            gl.lineWidth(3);
+            gl.useProgram(shaderProgram);
+            gl.enableVertexAttribArray(shaderProgram.aVertexPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgram.positionBuffer);
+            gl.vertexAttribPointer(
+                shaderProgram.aVertexPosition,
+                2,        // pobierz 2 wartości w każdej iteracji
+                gl.FLOAT, // typ float
+                false,    // bez normalizacji
+                0,        // rozmiar jednej iteracji
+                0         // przesunięcie w ramach iteracji
+            );
+            gl.uniform3fv(shaderProgram.uColorRGB, [
+                CURRENT_COLOR_R,
+                CURRENT_COLOR_G,
+                CURRENT_COLOR_B
+            ]);
+            gl.drawArrays(DRAW_MODE, 0, ADDED_POINTS.length);
+        }
+
+        // dodanie punktu do bufora
+        function addPoint(x, y) {
+            ADDED_POINTS.push([x, y]);
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgram.positionBuffer);
+            gl.bufferSubData(gl.ARRAY_BUFFER, 8 * (ADDED_POINTS.length - 1), new Float32Array([x, y]));
+        }
+
+        // wyświetlenie informacji
+        function info() {
+            // aktywne atrybuty
+            console.log('Attributes:')
+            const numAttribs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
+            for (let i = 0; i < numAttribs; ++i) {
+                const info = gl.getActiveAttrib(shaderProgram, i);
+                console.log('name:', info.name, 'type:', info.type, 'size:', info.size);
+            }
+            // aktywne uniformy
+            console.log('Uniforms:')
+            const numUniforms = gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
+            for (let i = 0; i < numUniforms; ++i) {
+                const info = gl.getActiveUniform(shaderProgram, i);
+                console.log('name:', info.name, 'type:', info.type, 'size:', info.size);
+            }
+        }
+    </script>
+</body>
+
+</html>

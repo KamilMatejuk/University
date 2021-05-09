@@ -1,0 +1,406 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 2, Zadanie 3
+
+    Gra Pong
+    Gra dwuosobowa, gdzie pierwszy gracz porusza się z użyciem W / S,
+    a drugi przez wykorzystanie strzałek.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 3</title>
+</head>
+
+<body>
+    <!-- stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "monospace";
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #canvas {
+            border: 1px black solid;
+            width: min(80vw, 80vh);
+            height: min(80vw, 80vh);
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas"></canvas>
+
+    <!-- tekst VertexShadera -->
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec4 aVertexPosition;
+        uniform vec3 uMove;
+
+        void main ( void ) {
+            gl_PointSize = 4.0;
+            gl_Position = aVertexPosition + vec4( uMove, 0.0 );
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec3 uColorRGB;
+
+        void main ( void ) {
+            gl_FragColor = vec4( uColorRGB, 1.0 );
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+        var gl;
+        var shaderProgram;
+        // obiekty gry
+        var OBJECTS = {}
+        // kolor tła
+        var BG_COLOR = [0.0, 0.0, 0.0]
+        // krok graczy
+        var PLAYER_STEP = 0.05
+
+        // po załadowaniu urychamiana jest metoda getConstants()
+        window.onload = init;
+
+        // dodanie listenera do kontoli poprzez klawiaturę
+        document.addEventListener("keydown", (e) => {
+            switch (e.key) {
+                case 'ArrowUp': // góra
+                    e.preventDefault();
+                    if (OBJECTS.playerRight.position[1] < 0.8) {
+                        OBJECTS.playerRight.position[1] += PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 'ArrowDown': // dół
+                    e.preventDefault();
+                    if (OBJECTS.playerRight.position[1] > -0.8) {
+                        OBJECTS.playerRight.position[1] -= PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 'w': // góra
+                    e.preventDefault();
+                    if (OBJECTS.playerLeft.position[1] < 0.8) {
+                        OBJECTS.playerLeft.position[1] += PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 's': // dół
+                    e.preventDefault();
+                    if (OBJECTS.playerLeft.position[1] > -0.8) {
+                        OBJECTS.playerLeft.position[1] -= PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+            }
+        });
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            // pobranie canvas i WebGL Context
+            const canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(...BG_COLOR, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // inicjalizacja i kompilacja VertexShadera
+            const vsSource = document.getElementById('vs').firstChild.nodeValue;
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vsSource);
+            gl.compileShader(vertexShader);
+            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(vertexShader));
+                console.log(gl);
+                return null;
+            }
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fsSource = document.getElementById('fs').firstChild.nodeValue;
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fsSource);
+            gl.compileShader(fragmentShader);
+            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(fragmentShader));
+                console.log(gl);
+                return null;
+            }
+
+            // dołączenie shaderów do programu
+            shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                console.log("Could not initialise shaders");
+                console.log(gl);
+                return null;
+            }
+
+            shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition')
+            shaderProgram.uMove = gl.getUniformLocation(shaderProgram, "uMove");
+            shaderProgram.uColorRGB = gl.getUniformLocation(shaderProgram, 'uColorRGB')
+
+            initData()
+            draw()
+            window.requestAnimationFrame(moveBall)
+        }
+
+        // zainicjowanie buforów dla każdego elementu
+        function initData() {
+            // player left
+            OBJECTS.playerLeft = {}
+            OBJECTS.playerLeft.position = [-0.95, 0.0, 0.0]
+            OBJECTS.playerLeft.color = [1.0, 1.0, 1.0]
+            OBJECTS.playerLeft.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.playerLeft.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.01, -0.15,
+                -0.01, 0.15,
+                0.01, 0.15,
+                0.01, -0.15,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.playerLeft.floatsPerVertex = 2
+            OBJECTS.playerLeft.numberOfVertices = 4
+            OBJECTS.playerLeft.drawMode = gl.TRIANGLE_FAN
+
+            // player right
+            OBJECTS.playerRight = {}
+            OBJECTS.playerRight.position = [0.95, 0.0, 0.0]
+            OBJECTS.playerRight.color = [1.0, 1.0, 1.0]
+            OBJECTS.playerRight.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.playerRight.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.01, -0.15,
+                -0.01, 0.15,
+                0.01, 0.15,
+                0.01, -0.15,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.playerRight.floatsPerVertex = 2
+            OBJECTS.playerRight.numberOfVertices = 4
+            OBJECTS.playerRight.drawMode = gl.TRIANGLE_FAN
+
+            // ball
+            OBJECTS.ball = {}
+            OBJECTS.ball.speed = 0.001
+            OBJECTS.ball.direction = [-1, 0]
+            OBJECTS.ball.position = [0.0, 0.0, 0.0]
+            OBJECTS.ball.color = [1.0, 1.0, 1.0]
+            OBJECTS.ball.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.ball.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.03, -0.03,
+                -0.03, 0.03,
+                0.03, 0.03,
+                0.03, -0.03,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.ball.floatsPerVertex = 2
+            OBJECTS.ball.numberOfVertices = 4
+            OBJECTS.ball.drawMode = gl.LINE_LOOP
+
+            // divider
+            OBJECTS.divider = {}
+            OBJECTS.divider.position = [0.0, 0.0, 1.0]
+            OBJECTS.divider.color = [0.3, 0.3, 0.3]
+            OBJECTS.divider.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.divider.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                0, 0.95,
+                0, 0.90,
+                0, 0.85,
+                0, 0.80,
+                0, 0.75,
+                0, 0.70,
+                0, 0.65,
+                0, 0.60,
+                0, 0.55,
+                0, 0.50,
+                0, 0.45,
+                0, 0.40,
+                0, 0.35,
+                0, 0.30,
+                0, 0.25,
+                0, 0.20,
+                0, 0.15,
+                0, 0.10,
+                0, 0.05,
+                0, -0.05,
+                -0.05, 0,
+                0.05, 0,
+                0, -0.10,
+                0, -0.15,
+                0, -0.20,
+                0, -0.25,
+                0, -0.30,
+                0, -0.35,
+                0, -0.40,
+                0, -0.45,
+                0, -0.50,
+                0, -0.55,
+                0, -0.60,
+                0, -0.65,
+                0, -0.70,
+                0, -0.75,
+                0, -0.80,
+                0, -0.85,
+                0, -0.90,
+                0, -0.95,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.divider.floatsPerVertex = 2
+            OBJECTS.divider.numberOfVertices = 40
+            OBJECTS.divider.drawMode = gl.LINES
+
+            // border
+            OBJECTS.border = {}
+            OBJECTS.border.position = [0.0, 0.0, 0.0]
+            OBJECTS.border.color = [0.3, 0.3, 0.3]
+            OBJECTS.border.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.border.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.95, -0.95,
+                -0.95, 0.95,
+                0.95, 0.95,
+                0.95, -0.95,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.border.floatsPerVertex = 2
+            OBJECTS.border.numberOfVertices = 4
+            OBJECTS.border.drawMode = gl.LINE_LOOP
+
+            // random background stars
+            OBJECTS.stars = {}
+            OBJECTS.stars.position = [0.0, 0.0, 0.0]
+            OBJECTS.stars.color = [0.5, 0.5, 0.5]
+            OBJECTS.stars.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.stars.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
+                new Array(16).fill(0).flatMap((i) => [
+                    2 * Math.random() - 1,
+                    2 * Math.random() - 1
+                ])
+            ), gl.STATIC_DRAW);
+            OBJECTS.stars.floatsPerVertex = 2
+            OBJECTS.stars.numberOfVertices = 16
+            OBJECTS.stars.drawMode = gl.POINTS
+        }
+
+        // narysowanie od nowa planszy po zmianach
+        function draw() {
+            // ustawienie koloru tła
+            gl.clearColor(...BG_COLOR, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            // rysowanie
+            drawObject(OBJECTS.stars)
+            drawObject(OBJECTS.divider)
+            drawObject(OBJECTS.border)
+            drawObject(OBJECTS.playerLeft)
+            drawObject(OBJECTS.playerRight)
+            drawObject(OBJECTS.ball)
+        }
+
+        // narysowanie konkretnego obiektu
+        function drawObject(obj) {
+            gl.useProgram(shaderProgram);
+            gl.lineWidth(3);
+            gl.enableVertexAttribArray(shaderProgram.positionBuffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.bufferId);
+            gl.vertexAttribPointer(
+                shaderProgram.aVertexPosition,
+                obj.floatsPerVertex, // pobierz n wartości w każdej iteracji
+                gl.FLOAT,            // typ float
+                false,               // bez normalizacji
+                0,                   // rozmiar jednej iteracji
+                0                    // przesunięcie w ramach iteracji
+            );
+            gl.uniform3fv(shaderProgram.uColorRGB, obj.color);
+            gl.uniform3fv(shaderProgram.uMove, obj.position);
+            gl.drawArrays(obj.drawMode, 0, obj.numberOfVertices);
+        }
+
+        // animacja poruszania się piłki
+        function moveBall(time) {
+            if (!OBJECTS.ball.lastFrameTime) {
+                OBJECTS.ball.lastFrameTime = time;
+            }
+            var timeDelta = time - OBJECTS.ball.lastFrameTime;
+            OBJECTS.ball.lastFrameTime = time;
+            var prevX = OBJECTS.ball.position[0]
+            var prevY = OBJECTS.ball.position[1]
+            var nextX = prevX + OBJECTS.ball.direction[0] * OBJECTS.ball.speed * timeDelta;
+            var nextY = prevY + OBJECTS.ball.direction[1] * OBJECTS.ball.speed * timeDelta;
+            // odbicie po lewej stronie
+            if (prevX > -0.92 && nextX < -0.92) {
+                var y = (prevY + nextY) / 2
+                var playerY = OBJECTS.playerLeft.position[1]
+                if (Math.abs(playerY - y) < 0.10) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                } else if (Math.abs(playerY - y) < 0.20) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                    OBJECTS.ball.direction[1] = (y - playerY) * 3
+                }
+            }
+            // odbicie po prawej stronie
+            if (prevX < 0.92 && nextX > 0.92) {
+                var y = (prevY + nextY) / 2
+                var playerY = OBJECTS.playerRight.position[1]
+                if (Math.abs(playerY - y) < 0.10) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                } else if (Math.abs(playerY - y) < 0.20) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                    OBJECTS.ball.direction[1] = (y - playerY) * 3
+                }
+            }
+            // odbicie na górze
+            if (prevY < 0.92 && nextY > 0.92) {
+                OBJECTS.ball.direction[1] = -OBJECTS.ball.direction[1]
+            }
+            // odbicie na fole
+            if (prevY > -0.92 && nextY < -0.92) {
+                OBJECTS.ball.direction[1] = -OBJECTS.ball.direction[1]
+            }
+            // wyjście poza planszę
+            if (nextX < -1 || nextX > 1) {
+                OBJECTS.ball.position = [0, 0, 0]
+                OBJECTS.ball.direction = [-1, 0]
+            } else {
+                OBJECTS.ball.position[0] = nextX
+                OBJECTS.ball.position[1] = nextY
+            }
+
+            draw()
+            window.requestAnimationFrame(moveBall)
+        }
+    </script>
+</body>
+
+</html>

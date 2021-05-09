@@ -1,0 +1,486 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 2, Zadanie 4
+
+    Gra Pong
+    Gra dwuosobowa, gdzie pierwszy gracz porusza się z użyciem W / S,
+    a drugi przez wykorzystanie strzałek.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 4</title>
+</head>
+
+<body>
+    <!-- stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "monospace";
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #canvas {
+            border: 1px black solid;
+            width: min(1200vw, 120vh);
+            height: min(80vw, 80vh);
+        }
+
+        img {
+            display: none;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas"></canvas>
+    <img id="ball" src="./valleyball.png">
+    <img id="net" src="./net.png">
+    <img id="court" src="./court.png">
+
+    <!-- tekst VertexShadera -->
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec4 aVertexPosition;
+        uniform vec3 uMove;
+
+        void main ( void ) {
+            gl_PointSize = 4.0;
+            gl_Position = aVertexPosition + vec4( uMove, 0.0 );
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <script id="fs" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec3 uColorRGB;
+
+        void main ( void ) {
+            gl_FragColor = vec4( uColorRGB, 1.0 );
+        }
+    </script>
+
+    <!-- tekst VertexShadera -->
+    <script id="vs-tex" type="x-shader/x-vertex">
+        attribute vec4 aVertexPosition;
+        attribute vec2 aTextureCoord;
+
+        uniform vec3 uMove;
+
+        varying vec2 vTextureCoord;
+
+        void main ( void ) {
+            gl_PointSize = 4.0;
+            gl_Position = aVertexPosition + vec4( uMove, 0.0 );
+            vTextureCoord = aTextureCoord;
+        }
+    </script>
+
+    <!-- text FragmentShadera -->
+    <script id="fs-tex" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec3 uColorRGB;
+        uniform sampler2D sampler;
+
+        varying vec2 vTextureCoord;
+
+        void main ( void ) {
+            gl_FragColor = texture2D(sampler, vTextureCoord);
+        }
+    </script>
+
+    <!-- główny skrypt z logiką -->
+    <script>
+        var gl;
+        var shaderProgramColor, shaderProgramTexture;
+        // obiekty gry
+        var OBJECTS = {}
+        // kolor tła
+        var BG_COLOR = [0.0, 0.0, 0.0]
+        // krok graczy
+        var PLAYER_STEP = 0.05
+
+        // po załadowaniu urychamiana jest metoda getConstants()
+        window.onload = init;
+
+        // dodanie listenera do kontoli poprzez klawiaturę
+        document.addEventListener("keydown", (e) => {
+            switch (e.key) {
+                case 'ArrowUp': // góra
+                    e.preventDefault();
+                    if (OBJECTS.playerRight.position[1] < 0.8) {
+                        OBJECTS.playerRight.position[1] += PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 'ArrowDown': // dół
+                    e.preventDefault();
+                    if (OBJECTS.playerRight.position[1] > -0.8) {
+                        OBJECTS.playerRight.position[1] -= PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 'w': // góra
+                    e.preventDefault();
+                    if (OBJECTS.playerLeft.position[1] < 0.8) {
+                        OBJECTS.playerLeft.position[1] += PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+                case 's': // dół
+                    e.preventDefault();
+                    if (OBJECTS.playerLeft.position[1] > -0.8) {
+                        OBJECTS.playerLeft.position[1] -= PLAYER_STEP;
+                    }
+                    draw();
+                    break;
+            }
+        });
+
+        function createProgram(vertexShaderSource, fragmentShaderSource) {
+            // inicjalizacja i kompilacja VertexShadera
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexShaderSource);
+            gl.compileShader(vertexShader);
+            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(vertexShader));
+                console.log(gl);
+                return null;
+            }
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentShaderSource);
+            gl.compileShader(fragmentShader);
+            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(fragmentShader));
+                console.log(gl);
+                return null;
+            }
+
+            // dołączenie shaderów do programu
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.log("Could not initialise shaders");
+                console.log(gl);
+                return null;
+            }
+            return program
+        }
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function init() {
+            // pobranie canvas i WebGL Context
+            const canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(...BG_COLOR, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            // ukrycie przezroczystości na teksturach
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            gl.enable(gl.BLEND);
+
+            // stworzenie programu do rysowania kolorami
+            shaderProgramColor = createProgram(
+                document.getElementById('vs').firstChild.nodeValue,
+                document.getElementById('fs').firstChild.nodeValue
+            )
+            shaderProgramColor.aVertexPosition = gl.getAttribLocation(shaderProgramColor, 'aVertexPosition')
+            shaderProgramColor.uMove = gl.getUniformLocation(shaderProgramColor, "uMove");
+            shaderProgramColor.uColorRGB = gl.getUniformLocation(shaderProgramColor, 'uColorRGB')
+
+            // stworzenie programu do nakładania tekstur
+            shaderProgramTexture = createProgram(
+                document.getElementById('vs-tex').firstChild.nodeValue,
+                document.getElementById('fs-tex').firstChild.nodeValue
+            )
+            shaderProgramTexture.aVertexPosition = gl.getAttribLocation(shaderProgramTexture, 'aVertexPosition')
+            shaderProgramTexture.aTextureCoord = gl.getAttribLocation(shaderProgramTexture, 'aTextureCoord')
+            shaderProgramTexture.uMove = gl.getUniformLocation(shaderProgramTexture, "uMove");
+
+            initData()
+            draw()
+            window.requestAnimationFrame(moveBall)
+        }
+
+        // zainicjowanie buforów dla każdego elementu
+        function initData() {
+            // player left
+            OBJECTS.playerLeft = {}
+            OBJECTS.playerLeft.position = [-0.95, 0.0, 0.0]
+            OBJECTS.playerLeft.color = [1.0, 1.0, 1.0]
+            OBJECTS.playerLeft.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.playerLeft.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.01, -0.15,
+                -0.01, 0.15,
+                0.01, 0.15,
+                0.01, -0.15,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.playerLeft.floatsPerVertex = 2
+            OBJECTS.playerLeft.numberOfVertices = 4
+            OBJECTS.playerLeft.drawMode = gl.TRIANGLE_FAN
+
+            // player right
+            OBJECTS.playerRight = {}
+            OBJECTS.playerRight.position = [0.95, 0.0, 0.0]
+            OBJECTS.playerRight.color = [1.0, 1.0, 1.0]
+            OBJECTS.playerRight.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.playerRight.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.01, -0.15,
+                -0.01, 0.15,
+                0.01, 0.15,
+                0.01, -0.15,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.playerRight.floatsPerVertex = 2
+            OBJECTS.playerRight.numberOfVertices = 4
+            OBJECTS.playerRight.drawMode = gl.TRIANGLE_FAN
+
+            // ball
+            OBJECTS.ball = {}
+            OBJECTS.ball.speed = 0.001
+            OBJECTS.ball.direction = [-1, 0]
+            OBJECTS.ball.position = [0.0, 0.0, 0.0]
+            OBJECTS.ball.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.ball.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.04, -0.06, 0, 0,
+                -0.04, 0.06, 0, 1,
+                0.04, 0.06, 1, 1,
+                0.04, -0.06, 1, 0
+            ]), gl.STATIC_DRAW);
+            OBJECTS.ball.floatsPerVertex = 4
+            OBJECTS.ball.numberOfVertices = 4
+            OBJECTS.ball.drawMode = gl.TRIANGLE_FAN
+            OBJECTS.ball.textureId = gl.createTexture()
+            gl.bindTexture(gl.TEXTURE_2D, OBJECTS.ball.textureId)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.texImage2D(
+                gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
+                document.getElementById('ball')
+            )
+            gl.bindTexture(gl.TEXTURE_2D, null)
+
+            // divider
+            OBJECTS.divider = {}
+            OBJECTS.divider.position = [0.0, 0.0, 1.0]
+            OBJECTS.divider.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.divider.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.05, -0.95, 0, 0,
+                -0.05, 0.95, 0, 1,
+                0.05, 0.95, 1, 1,
+                0.05, -0.95, 1, 0
+            ]), gl.STATIC_DRAW);
+            OBJECTS.divider.floatsPerVertex = 4
+            OBJECTS.divider.numberOfVertices = 4
+            OBJECTS.divider.drawMode = gl.TRIANGLE_FAN
+            OBJECTS.divider.textureId = gl.createTexture()
+            gl.bindTexture(gl.TEXTURE_2D, OBJECTS.divider.textureId)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.texImage2D(
+                gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
+                document.getElementById('net')
+            )
+            gl.bindTexture(gl.TEXTURE_2D, null)
+
+            // border
+            OBJECTS.border = {}
+            OBJECTS.border.position = [0.0, 0.0, 0.0]
+            OBJECTS.border.color = [0.3, 0.3, 0.3]
+            OBJECTS.border.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.border.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -0.95, -0.95,
+                -0.95, 0.95,
+                0.95, 0.95,
+                0.95, -0.95,
+            ]), gl.STATIC_DRAW);
+            OBJECTS.border.floatsPerVertex = 2
+            OBJECTS.border.numberOfVertices = 4
+            OBJECTS.border.drawMode = gl.LINE_LOOP
+
+            // court
+            OBJECTS.court = {}
+            OBJECTS.court.position = [0.0, 0.0, 0.0]
+            OBJECTS.court.bufferId = gl.createBuffer()
+            gl.bindBuffer(gl.ARRAY_BUFFER, OBJECTS.court.bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -1, -1, 0, 0,
+                -1, 1, 0, 1,
+                1, 1, 1, 1,
+                1, -1, 1, 0
+            ]), gl.STATIC_DRAW);
+            OBJECTS.court.floatsPerVertex = 4
+            OBJECTS.court.numberOfVertices = 4
+            OBJECTS.court.drawMode = gl.TRIANGLE_FAN
+            OBJECTS.court.textureId = gl.createTexture()
+            gl.bindTexture(gl.TEXTURE_2D, OBJECTS.court.textureId)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+            gl.texImage2D(
+                gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
+                document.getElementById('court')
+            )
+            gl.bindTexture(gl.TEXTURE_2D, null)
+        }
+
+        // narysowanie od nowa planszy po zmianach
+        function draw() {
+            // ustawienie koloru tła
+            gl.clearColor(...BG_COLOR, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            // rysowanie
+            drawTextured(OBJECTS.court)
+            drawObject(OBJECTS.border)
+            drawObject(OBJECTS.playerLeft)
+            drawObject(OBJECTS.playerRight)
+            drawTextured(OBJECTS.divider)
+            drawTextured(OBJECTS.ball)
+        }
+
+        // narysowanie konkretnego obiektu
+        function drawObject(obj) {
+            gl.useProgram(shaderProgramColor);
+            gl.lineWidth(3);
+            // gl.enableVertexAttribArray(shaderProgram.positionBuffer);
+            gl.enableVertexAttribArray(shaderProgramColor.aVertexPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.bufferId);
+            gl.vertexAttribPointer(
+                shaderProgramColor.aVertexPosition,
+                obj.floatsPerVertex, // pobierz n wartości w każdej iteracji
+                gl.FLOAT,            // typ float
+                false,               // bez normalizacji
+                0,                   // rozmiar jednej iteracji
+                0                    // przesunięcie w ramach iteracji
+            );
+            gl.uniform3fv(shaderProgramColor.uColorRGB, obj.color);
+            gl.uniform3fv(shaderProgramColor.uMove, obj.position);
+            gl.drawArrays(obj.drawMode, 0, obj.numberOfVertices);
+        }
+
+        function drawTextured(obj) {
+            gl.useProgram(shaderProgramTexture);
+            gl.lineWidth(3);
+
+            gl.enableVertexAttribArray(shaderProgramTexture.aVertexPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, obj.bufferId);
+            gl.vertexAttribPointer(
+                shaderProgramTexture.aVertexPosition,
+                2,                                  // pobierz n wartości w każdej iteracji
+                gl.FLOAT,                           // typ float
+                false,                              // bez normalizacji
+                4 * Float32Array.BYTES_PER_ELEMENT, // rozmiar jednej iteracji
+                0                                   // przesunięcie w ramach iteracji
+            );
+            gl.uniform3fv(shaderProgramTexture.uMove, obj.position);
+            
+            gl.enableVertexAttribArray(shaderProgramTexture.aTextureCoord);
+            gl.bindTexture(gl.TEXTURE_2D, obj.textureId)
+            gl.vertexAttribPointer(
+                shaderProgramTexture.aTextureCoord,
+                2,                                  // pobierz n wartości w każdej iteracji
+                gl.FLOAT,                           // typ float
+                false,                              // bez normalizacji
+                4 * Float32Array.BYTES_PER_ELEMENT, // rozmiar jednej iteracji
+                2 * Float32Array.BYTES_PER_ELEMENT  // przesunięcie w ramach iteracji
+            );            
+            gl.activeTexture(gl.TEXTURE0)
+            gl.drawArrays(obj.drawMode, 0, obj.numberOfVertices);
+        }
+
+        // animacja poruszania się piłki
+        function moveBall(time) {
+            if (!OBJECTS.ball.lastFrameTime) {
+                OBJECTS.ball.lastFrameTime = time;
+            }
+            var timeDelta = time - OBJECTS.ball.lastFrameTime;
+            OBJECTS.ball.lastFrameTime = time;
+            var prevX = OBJECTS.ball.position[0]
+            var prevY = OBJECTS.ball.position[1]
+            var nextX = prevX + OBJECTS.ball.direction[0] * OBJECTS.ball.speed * timeDelta;
+            var nextY = prevY + OBJECTS.ball.direction[1] * OBJECTS.ball.speed * timeDelta;
+            // odbicie po lewej stronie
+            if (prevX > -0.9 && nextX < -0.9) {
+                var y = (prevY + nextY) / 2
+                var playerY = OBJECTS.playerLeft.position[1]
+                if (Math.abs(playerY - y) < 0.10) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                } else if (Math.abs(playerY - y) < 0.20) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                    OBJECTS.ball.direction[1] = (y - playerY) * 5
+                }
+            }
+            // odbicie po prawej stronie
+            if (prevX < 0.9 && nextX > 0.9) {
+                var y = (prevY + nextY) / 2
+                var playerY = OBJECTS.playerRight.position[1]
+                if (Math.abs(playerY - y) < 0.10) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                } else if (Math.abs(playerY - y) < 0.20) {
+                    OBJECTS.ball.direction[0] = -OBJECTS.ball.direction[0]
+                    OBJECTS.ball.direction[1] = (y - playerY) * 5   
+                }
+            }
+            // odbicie na górze
+            if (prevY < 0.9 && nextY > 0.9) {
+                OBJECTS.ball.direction[1] = -OBJECTS.ball.direction[1]
+            }
+            // odbicie na fole
+            if (prevY > -0.9 && nextY < -0.9) {
+                OBJECTS.ball.direction[1] = -OBJECTS.ball.direction[1]
+            }
+            // wyjście poza planszę
+            if (nextX < -1 || nextX > 1) {
+                OBJECTS.ball.position = [0, 0, 0]
+                OBJECTS.ball.direction = [Math.random() >= 0.5 ? 1 : -1, 0]
+            } else {
+                OBJECTS.ball.position[0] = nextX
+                OBJECTS.ball.position[1] = nextY
+            }
+
+            draw()
+            window.requestAnimationFrame(moveBall)
+        }
+    </script>
+</body>
+
+</html>
