@@ -7,4 +7,4 @@ Below are links to projects I took part in, but are hosted somewhere else:
 * [Twitter generator](https://github.com/Reclocco/PYTON-SUPER-PROJEKT) `Python`
 * [Cyber City Sim - city creation game](https://github.com/jerry-sky/cyber-city-sim) `Angular` `TypeScript` `Node.js`
 * [Compiler](https://github.com/KamilMatejuk/Compiler) `C++` `Bison` `Flex`
-* [Grupkowo](https://github.com/KamilMatejuk/Grupkowo) `Mobile App`, `Kotlin`, `FastAPI`
+* [Grupkowo](https://github.com/KamilMatejuk/Grupkowo) `Android`, `Kotlin`, `FastAPI`
