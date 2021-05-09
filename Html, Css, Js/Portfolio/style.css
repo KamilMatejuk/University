@@ -43,16 +43,57 @@ nav {
     margin-bottom: 10px;
     box-shadow: 0 0 8px 2px var(--color7);
 }
-
+nav .regular-links {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+nav i {
+    display: none;
+    font-weight: bold;
+    font-size: 2em;
+    color: var(--color1);
+}
+nav .icon-menu:hover,
+nav .icon-menu:focus,
+nav .icon-cancel:hover,
+nav .icon-cancel:focus {
+    animation: spin 0.6s ease-in-out;
+}
 nav a {
     font-weight: bold;
     font-size: 0.75em;
     color: var(--color1);
 }
-
-#phone-contact {
-    display: none;
+@keyframes spin {
+      0% { transform:rotate(0deg); }
+    100% { transform:rotate(180deg); }
 }
+.mobile-menu {
+    width: 100vw;
+    min-height: 92vh;
+    position: fixed;
+    top: 8vh;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--color2);
+    z-index: 100;
+}
+.mobile-menu a {
+    font-size: 1.5em;
+}
+@keyframes slideDown {
+      0% { top: -100vh; }
+    100% { top: 8vh; }
+}
+@keyframes slideUp {
+  100% { top: -100vh; display: none; }
+}
+
 
 /* ********************** main contents ********************** */
 
@@ -263,6 +304,18 @@ footer .icons i {
 
 /* tablets */
 @media screen and (min-width: 480px) {
+    nav .icon-menu {
+        display: none;
+    }
+    nav .regular-links {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    nav #phone-contact {
+        display: none;
+    }
     nav a {
         font-size: 1em;
     }
@@ -287,18 +340,17 @@ footer .icons i {
         to {font-size: 2.5em;}
       }
 
-    #phone-contact {
+    nav #phone-contact {
         display: block;
-        position: absolute;
-        right: 5%;
-        font-size: 2em;
-        animation: pulsating 1s ease-in-out 0s infinite alternate;
     }
     a {
         font-size: 1.5em;
     }
     nav {
         justify-content: flex-start;
+    }
+    nav i {
+        display: block;
     }
     nav a {
         font-size: 1.3em;
@@ -334,6 +386,18 @@ footer .icons i {
 @media screen and (min-width: 1025px) {
     nav {
         padding: 0 0 0 5%;
+    }
+    nav .regular-links {
+        justify-content: flex-start;
+    }
+    nav #phone-contact {
+        display: block;
+        position: absolute;
+        right: 5%;
+    }
+    nav i {
+        font-size: 1em;
+        animation: pulsating 1s ease-in-out 0s infinite alternate;
     }
     section#info {
         justify-content: space-around;

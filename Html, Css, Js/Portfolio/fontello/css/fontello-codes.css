@@ -1,5 +1,7 @@
 
 .icon-phone:before { content: '\e800'; } /* '' */
+.icon-cancel:before { content: '\e801'; } /* '' */
+.icon-menu:before { content: '\f0c9'; } /* '' */
 .icon-stackoverflow:before { content: '\f16c'; } /* '' */
 .icon-mail-squared:before { content: '\f199'; } /* '' */
 .icon-github-squared:before { content: '\f300'; } /* '' */

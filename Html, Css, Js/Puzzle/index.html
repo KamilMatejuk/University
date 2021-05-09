@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Kamil Matejuk">
+    <title>Układanka</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="loadFullImages()">
+    <!-- element canvas na którym będzie rysowane -->
+    <div class="draw">
+        <canvas id="canvas"></canvas>
+    </div>
+    <!-- instrukcje i input -->
+    <aside>
+        <div class="imgs">
+            <img id="img1" src="./compressed_imgs/waldo_1.jpg" onclick="changeImage(event)" class="choosen" />
+            <img id="img2" src="./compressed_imgs/waldo_2.jpg" onclick="changeImage(event)" />
+            <img id="img3" src="./compressed_imgs/stripes.jpg" onclick="changeImage(event)" />
+            <img id="img4" src="./compressed_imgs/rainbow.jpg" onclick="changeImage(event)" />
+            <img id="img5" src="./compressed_imgs/puppies.jpg" onclick="changeImage(event)" />
+            <img id="img6" src="./compressed_imgs/harrypotter.jpg" onclick="changeImage(event)" />
+            <img id="img7" src="./compressed_imgs/lake.jpg" onclick="changeImage(event)" />
+            <img id="img8" src="./compressed_imgs/mars.jpg" onclick="changeImage(event)" />
+            <img id="img9" src="./compressed_imgs/math.jpg" onclick="changeImage(event)" />
+            <img id="img10" src="./compressed_imgs/panda.jpg" onclick="changeImage(event)" />
+            <img id="img11" src="./compressed_imgs/puzzle.jpg" onclick="changeImage(event)" />
+            <img id="img12" src="./compressed_imgs/yoda.jpg" onclick="changeImage(event)" />
+        </div>
+        <section class="controls">
+            <input id="rows" type="number" placeholder="Ilość wierszy (4)">
+            <input id="cols" type="number" placeholder="Ilość kolumn (4)">
+            <button onclick="load()">Załaduj</button>
+        </section>
+    </aside>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
