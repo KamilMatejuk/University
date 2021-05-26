@@ -1,0 +1,33 @@
+@import '__variables';
+@import '__breakpoints';
+
+section.error404 {
+    width: 100%;
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h3 {
+        font-size: 7em;
+        color: $color6;
+        margin-bottom: 0;
+    }
+
+    h5 {
+        color: $color6;
+        margin-top: 0;
+        margin-bottom: 0;
+
+        @include media-query(medium) {
+            font-size: 1.2em;
+        }
+    }
+
+    a {
+        @include media-query(medium) {
+            font-size: 1.2em;
+            margin: 0;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+@import '__variables';
+
+* {
+    font-family: adelle-sans, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+// navigation
+@import '__nav';
+// footer
+@import '__footer';
+// main contents of page
+@import '__content';
+// error page
+@import '__404';

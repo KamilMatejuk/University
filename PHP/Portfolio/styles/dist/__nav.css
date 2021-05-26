@@ -1,0 +1,151 @@
+nav {
+  width: 100vw;
+  height: 8vh;
+  padding: 5%;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  background: #000000;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 10px;
+  box-shadow: 0 0 8px 2px #cccccc;
+}
+@media only screen and (min-width: 769px) {
+  nav {
+    justify-content: flex-start;
+  }
+}
+@media only screen and (min-width: 1025px) {
+  nav {
+    padding: 0 0 0 5%;
+  }
+}
+nav .regular-links {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+@media only screen and (min-width: 480px) {
+  nav .regular-links {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+}
+@media only screen and (min-width: 1025px) {
+  nav .regular-links {
+    justify-content: flex-start;
+  }
+}
+nav i {
+  display: none;
+  font-weight: bold;
+  font-size: 2em;
+  color: #ffc400;
+}
+@media only screen and (min-width: 769px) {
+  nav i {
+    display: block;
+  }
+}
+@media only screen and (min-width: 1025px) {
+  nav i {
+    font-size: 1em;
+    animation: pulsating 1s ease-in-out 0s infinite alternate;
+  }
+}
+nav a {
+  font-weight: bold;
+  font-size: 0.75em;
+  color: #ffc400;
+}
+@media only screen and (min-width: 480px) {
+  nav a {
+    font-size: 1em;
+  }
+}
+@media only screen and (min-width: 769px) {
+  nav a {
+    font-size: 1.3em;
+    padding: 10px;
+  }
+}
+@media only screen and (min-width: 480px) {
+  nav .icon-menu {
+    display: none;
+  }
+}
+nav .icon-menu:hover, nav .icon-menu:focus,
+nav .icon-cancel:hover,
+nav .icon-cancel:focus {
+  animation: spin 0.6s ease-in-out;
+}
+@media only screen and (min-width: 480px) {
+  nav #phone-contact {
+    display: none;
+  }
+}
+@media only screen and (min-width: 769px) {
+  nav #phone-contact {
+    display: none;
+  }
+}
+@media only screen and (min-width: 1025px) {
+  nav #phone-contact {
+    display: block;
+    position: absolute;
+    right: 5%;
+  }
+}
+
+.mobile-menu {
+  width: 100vw;
+  min-height: 92vh;
+  position: fixed;
+  top: 8vh;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  background: #000000;
+  z-index: 100;
+}
+.mobile-menu a {
+  font-size: 1.5em;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+@keyframes slideDown {
+  0% {
+    top: -100vh;
+  }
+  100% {
+    top: 8vh;
+  }
+}
+@keyframes slideUp {
+  100% {
+    top: -100vh;
+    display: none;
+  }
+}
+@keyframes pulsating {
+  from {
+    font-size: 2em;
+  }
+  to {
+    font-size: 2.5em;
+  }
+}

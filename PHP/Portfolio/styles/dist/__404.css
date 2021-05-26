@@ -1,0 +1,28 @@
+section.error404 {
+  width: 100%;
+  min-height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+section.error404 h3 {
+  font-size: 7em;
+  color: #999999;
+  margin-bottom: 0;
+}
+section.error404 h5 {
+  color: #999999;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+@media only screen and (min-width: 769px) {
+  section.error404 h5 {
+    font-size: 1.2em;
+  }
+}
+@media only screen and (min-width: 769px) {
+  section.error404 a {
+    font-size: 1.2em;
+    margin: 0;
+  }
+}
