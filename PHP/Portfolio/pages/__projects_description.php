@@ -74,6 +74,7 @@
                 </form>";
             }
             waitForForms();
+            autoLogoutAfter(5);
             ?>
         </div>
     </section>

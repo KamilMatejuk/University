@@ -86,3 +86,12 @@ function waitForForms()
         }
     }
 }
+
+function autoLogoutAfter($mins)
+{
+    if (isset($_SESSION['timestamp']) && time() - $_SESSION['timestamp'] > $mins * 60) {
+        logout();
+    } else {
+        $_SESSION['timestamp'] = time();
+    }
+}
