@@ -14,6 +14,7 @@
 * `Basic` [Find_Repeting_Files](#Find_Repeting_Files)
 * `Data Structures` [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication)
 * `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
+* `Matrix` `Numeric ALgebra` [Matrix_Decomposition_QR](#matrix-decomposition-qr)
 * `Linear Regression` [Movie_Recomendation](#Movie_Recomendation)
 * `Machine Learning` [Neural_Network_XOR](#Neural_Network_XOR)
 * `Machine Learning` [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
@@ -81,6 +82,9 @@ Multiplication of big integers using Fourier Transform and three different algor
 
 ### Lowercase_Files_Names
 Algorithm changing all files name to lowercase in given directory and below.
+
+### Matrix_Decomposition_QR
+Decompose Matrix `A` into two metrices `QR`, such as `Q` is an orthogonal matrix and `R` is an upper triangular matrix, using [Householder](https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections) algorythm.
 
 ### Movie_Recomendation
 Using [Movie Latest Dataset](https://grouplens.org/datasets/movielens/latest/) I created a recomendation system for given user. This set is quite big (`ml-latest.zip`, `265 MB`, `27 000 000` ratings, by `280 000` users on `58 000` movies). Using movie ratings by different user the program aims to sort movies in order of possibility, that this movie will get high rating by another user. I used calculations on `sparse metrices` (because of the size of data). The first argument in `main`: `userId` means for which user the recommendations will be generated.
