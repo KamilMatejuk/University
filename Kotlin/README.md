@@ -2,6 +2,8 @@
 * `SurfaceView` [Arkanoid](#arkanoid)
 * `ViewPager2` `CameraX` [Gallery](#gallery)
 * `Fragments` [Hangman](#hangman)
+* `Google Map` `Firebase` [Maps](#Maps)
+* `API` `Retrofit` [Math_Operations](#math-operations)
 * `Firebase` [Messanger](#messanger)
 * `Fragments` [Tic_Tac_Toe](#tic-tac-toe)
 * `Database` `Notifications` [To_Do](#to-do)
@@ -18,6 +20,12 @@ Application storing photos, added by user using `CameraX` library.
 
 ### Hangman
 Game, where user gueses word. The purpose was to learn fragments, responsive layout, orientation change and `onSaveInstanceState()`.
+
+### Maps
+App uses Google Maps to display a series of places, saved in Firebase database, as well as draw paths on the map.
+
+### Math Operations
+App connects with external [API](https://github.com/aunyks/newton-api) and allows user to make basic mathematical transformations and operations. The app uses `Retrofit` to connect, send requests and convert responses.
 
 ### Messanger
 Application allowing multiple user to create an account, login into it (`Firebase Auth`) and send messages to each other (`Firebase DataStorage`).
