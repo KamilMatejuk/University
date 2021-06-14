@@ -1,0 +1,823 @@
+<!--
+    Kamil Matejuk
+    250135
+    Grafika Komputreowa, Labolatoria
+    Lista 3, Zadanie 1
+
+    Poniżej znajduje się przerobiony program Prof. Kika (oryginalny program: https://github.com/mki1967/canvas-examples/tree/master/cube-texture)
+
+    Poza podstawowymi zmianami wynikającymi z treści zadania, całość przeniosłem do jednego pliku, oraz przepisałem niektóre funkcje,
+    ponieważ w ten sposób łatwiej mi było wprowadzać zmiany wymagane w treści.
+
+    Zdjęcia które są pobierane są moje, natomiast musiałem umieścić je online, aby uniknąć błędów CORS.
+
+    W panelu po prawej można zmienić tryb filtrowania tekstur.
+    Najbardziej zauważąlna różnica jest dla zmiany gl.LINEAR / gl.NEAREST dla gl.TEXTURE_MAG_FILTER skyboxa.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 1</title>
+</head>
+
+<body>
+    <!-- stylowanie -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "monospace";
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+        }
+
+        #canvas {
+            border: 1px black solid;
+            width: 100%;
+            height: 100vh;
+        }
+
+        aside {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .choose-options {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .choose-options code {
+            color: #333;
+            background: #ccc;
+            padding: 5px 10px;
+            border-radius: 5px;
+            width: fit-content;
+        }
+
+        .choose-options .options {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 20px 1fr;
+            padding: 5px;
+            flex: none;
+        }
+
+        .choose-options .options input {
+            width: 60%;
+            height: 60%;
+            display: block;
+            margin: 25%;
+        }
+
+        .choose-options .options label {
+            margin-left: 10px;
+        }
+    </style>
+
+    <!-- element canvas na którym będzie rysowane -->
+    <canvas id="canvas" width="512" height="512"></canvas>
+    <!-- opcje -->
+    <aside>
+        <div class="choose-options">
+            <p>Pudełko</p>
+            <code>gl.TEXTURE_MIN_FILTER</code>
+            <form class="options">
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="box-min-LINEAR" checked>
+                <label for="box-min-LINEAR">gl.LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="box-min-NEAREST">
+                <label for="box-min-NEAREST">gl.NEAREST</label>
+            </form>
+            <code>gl.TEXTURE_MAG_FILTER</code>
+            <form class="options">
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="box-mag-LINEAR" checked>
+                <label for="box-mag-LINEAR">gl.LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="box-mag-NEAREST">
+                <label for="box-mag-NEAREST">gl.NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="box-mag-NEAREST_MIPMAP_NEAREST">
+                <label for="box-mag-NEAREST_MIPMAP_NEAREST">gl.NEAREST_MIPMAP_NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="box-mag-LINEAR_MIPMAP_NEAREST">
+                <label for="box-mag-LINEAR_MIPMAP_NEAREST">gl.LINEAR_MIPMAP_NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="box-mag-NEAREST_MIPMAP_LINEAR">
+                <label for="box-mag-NEAREST_MIPMAP_LINEAR">gl.NEAREST_MIPMAP_LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="box-mag-LINEAR_MIPMAP_LINEAR">
+                <label for="box-mag-LINEAR_MIPMAP_LINEAR">gl.LINEAR_MIPMAP_LINEAR</label>
+                <input type="checkbox" name="type" onchange="chooseMipmap(event, 'box')" id="box-mag-mipmap">
+                <label for="box-mag-mipmap">MipMap</label>
+            </form>
+        </div>
+        <div class="choose-options">
+            <p>SkyBox</p>
+            <code>gl.TEXTURE_MIN_FILTER</code>
+            <form class="options">
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="sbx-min-LINEAR" checked>
+                <label for="sbx-min-LINEAR">gl.LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="sbx-min-NEAREST">
+                <label for="sbx-min-NEAREST">gl.NEAREST</label>
+            </form>
+            <code>gl.TEXTURE_MAG_FILTER</code>
+            <form class="options">
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="sbx-mag-LINEAR" checked>
+                <label for="sbx-mag-LINEAR">gl.LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)" id="sbx-mag-NEAREST">
+                <label for="sbx-mag-NEAREST">gl.NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="sbx-mag-NEAREST_MIPMAP_NEAREST">
+                <label for="sbx-mag-NEAREST_MIPMAP_NEAREST">gl.NEAREST_MIPMAP_NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="sbx-mag-LINEAR_MIPMAP_NEAREST">
+                <label for="sbx-mag-LINEAR_MIPMAP_NEAREST">gl.LINEAR_MIPMAP_NEAREST</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="sbx-mag-NEAREST_MIPMAP_LINEAR">
+                <label for="sbx-mag-NEAREST_MIPMAP_LINEAR">gl.NEAREST_MIPMAP_LINEAR</label>
+                <input type="radio" name="type" onchange="chooseTextureFilterType(event)"
+                    id="sbx-mag-LINEAR_MIPMAP_LINEAR">
+                <label for="sbx-mag-LINEAR_MIPMAP_LINEAR">gl.LINEAR_MIPMAP_LINEAR</label>
+                <input type="checkbox" name="type" onchange="chooseMipmap(event, 'sbx')" id="sbx-mag-mipmap">
+                <label for="sbx-mag-mipmap">MipMap</label>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- ----------------------- SHADERY DLA KOSTKI ----------------------- -->
+    <!-- ------------------------------------------------------------------ -->
+
+    <!-- VertexShader -->
+    <script id="vs-cube" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+        attribute vec2 aTextureCoord;
+
+        varying vec2 vTextureCoord;
+
+        uniform mat4 uProjection;
+        uniform mat4 uRotation;
+        uniform vec3 uMove;
+
+        void main ( void ) {
+            gl_PointSize = 4.0;
+            vec4 pos = uRotation * vec4(aVertexPosition, 1.0) + vec4(uMove, 0.0);
+            gl_Position = uProjection * pos;
+            vTextureCoord = aTextureCoord;
+        }
+    </script>
+
+    <!-- FragmentShader -->
+    <script id="fs-cube" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec2 vTextureCoord;
+        
+        uniform sampler2D sampler;
+
+        void main ( void ) {
+            gl_FragColor = texture2D(sampler, vTextureCoord);
+        }
+    </script>
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- ---------------------- SHADERY DLA SKYBOXA ----------------------- -->
+    <!-- ------------------------------------------------------------------ -->
+
+    <!-- VertexShader -->
+    <script id="vs-sbx" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+
+        varying vec3 vTextureCoord;
+
+        uniform mat4 uProjection;
+        uniform mat4 uView;
+
+        void main ( void ) {
+            gl_PointSize = 4.0;
+            vec4 pos = uProjection * uView * vec4(aVertexPosition, 1.0);
+            gl_Position = pos.xyww;
+            vTextureCoord = aVertexPosition;
+        }
+    </script>
+
+    <!-- FragmentShader -->
+    <script id="fs-sbx" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec3 vTextureCoord;
+        
+        uniform samplerCube sampler;
+
+        void main ( void ) {
+            gl_FragColor = textureCube(sampler, vTextureCoord);
+        }
+    </script>
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- --------------------- OPERACJE NA MACIERZACH --------------------- -->
+    <!-- ------------------------------------------------------------------ -->
+
+    <script>
+        function createProjectionMatrix4(gl, zNear, zFar, zoomY) {
+            var xx = zoomY * gl.viewportHeight / gl.viewportWidth;
+            var yy = zoomY;
+            var zz = (zFar + zNear) / (zFar - zNear);
+            var zw = 1;
+            var wz = -2 * zFar * zNear / (zFar - zNear);
+            return [
+                [xx, 0, 0, 0],
+                [0, yy, 0, 0],
+                [0, 0, zz, wz],
+                [0, 0, zw, 0]
+            ]
+        }
+
+        function glMatrix4FromMatrix(m) {
+            return new Float32Array([
+                m[0][0], m[1][0], m[2][0], m[3][0],
+                m[0][1], m[1][1], m[2][1], m[3][1],
+                m[0][2], m[1][2], m[2][2], m[3][2],
+                m[0][3], m[1][3], m[2][3], m[3][3]
+            ]);
+        }
+
+        function scalarProduct4(v, w) {
+            return v[0] * w[0] + v[1] * w[1] + v[2] * w[2] + v[3] * w[3];
+        };
+
+        function matrix4Column(m, c) {
+            return [m[0][c], m[1][c], m[2][c], m[3][c]];
+        };
+
+        function matrix4Product(m1, m2) {
+            var sp = scalarProduct4;
+            var col = matrix4Column;
+            return [
+                [sp(m1[0], col(m2, 0)), sp(m1[0], col(m2, 1)), sp(m1[0], col(m2, 2)), sp(m1[0], col(m2, 3))],
+                [sp(m1[1], col(m2, 0)), sp(m1[1], col(m2, 1)), sp(m1[1], col(m2, 2)), sp(m1[1], col(m2, 3))],
+                [sp(m1[2], col(m2, 0)), sp(m1[2], col(m2, 1)), sp(m1[2], col(m2, 2)), sp(m1[1], col(m2, 3))],
+                [sp(m1[3], col(m2, 0)), sp(m1[3], col(m2, 1)), sp(m1[3], col(m2, 2)), sp(m1[3], col(m2, 3))]
+            ];
+        };
+
+        function matrix4RotatedXZ(matrix, alpha) {
+            var c = Math.cos(alpha);
+            var s = Math.sin(alpha);
+            var rot = [
+                [c, 0, -s, 0],
+                [0, 1, 0, 0],
+                [s, 0, c, 0],
+                [0, 0, 0, 1]
+            ];
+            return matrix4Product(rot, matrix);
+        };
+
+        function matrix4RotatedYZ(matrix, alpha) {
+            var c = Math.cos(alpha);
+            var s = Math.sin(alpha);
+            var rot = [
+                [1, 0, 0, 0],
+                [0, c, -s, 0],
+                [0, s, c, 0],
+                [0, 0, 0, 1]
+            ];
+            return matrix4Product(rot, matrix);
+        };
+    </script>
+
+    <!-- ------------------------------------------------------------------ -->
+    <!-- ------------------------- GŁÓWNA LOGIKA -------------------------- -->
+    <!-- ------------------------------------------------------------------ -->
+
+    <!-- główny skrypt z logiką -->
+    <script>
+        const PROJECTION_Z_NEAR = 0.25;
+        const PROJECTION_Z_FAR = 300;
+        const PROJECTION_ZOOM_Y = 2.0;
+        const identityMatrix4 = [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ];
+
+        var rotationMatrix4 = identityMatrix4;
+        var moveVector = [0, 0, 10];
+
+        var gl;
+        var shaderProgramCube, shaderProgramSkybox;
+
+        // tryby renderowania filtrowania tekstur
+        var TEX_MIN_FILTER_BOX;
+        var TEX_MAG_FILTER_BOX;
+        var TEX_MIN_FILTER_SBX;
+        var TEX_MAG_FILTER_SBX;
+        var MIPMAP_BOX = false;
+        var MIPMAP_SBX = false;
+
+        // po załadowaniu okna, pobierane sa obrazki, a nastepnie renderowana scena
+        window.onload = loadImages(onImagesLoaded);
+
+        // poruszanie się po scenie za pomocą klawiatury
+        window.onkeydown = (e) => {
+            var code = e.which || e.keyCode;
+            var alpha = Math.PI / 32;
+            switch (code) {
+                case 38: // up
+                case 73: // I
+                    rotationMatrix4 = matrix4RotatedYZ(rotationMatrix4, alpha);
+                    e.preventDefault();
+                    break;
+                case 40: // down
+                case 75: // K
+                    rotationMatrix4 = matrix4RotatedYZ(rotationMatrix4, -alpha);
+                    e.preventDefault();
+                    break;
+                case 37: // left
+                case 74:// J
+                    rotationMatrix4 = matrix4RotatedXZ(rotationMatrix4, -alpha);
+                    e.preventDefault();
+                    break;
+                case 39:// right
+                case 76: // L
+                    rotationMatrix4 = matrix4RotatedXZ(rotationMatrix4, alpha);
+                    e.preventDefault();
+                    break;
+                case 70: // F
+                    moveVector[2]++;
+                    e.preventDefault();
+                    break;
+                case 66: // B
+                case 86: // V
+                    moveVector[2]--;
+                    e.preventDefault();
+                    break;
+                case 32: // space
+                    rotationMatrix4 = identityMatrix4;
+                    e.preventDefault();
+                    break;
+            }
+            draw();
+        }
+
+        // zmiana trybu renderowania (gl.TEXTURE_MAG_FILTER, gl.TEXTURE_MIN_FILTER)
+        function chooseTextureFilterType(event) {
+            const [object, filter, option] = event.target.id.split('-');
+            let o;
+            switch (option) {
+                case "LINEAR":
+                    o = gl.LINEAR; break;
+                case "NEAREST":
+                    o = gl.NEAREST; break;
+                case "NEAREST_MIPMAP_NEAREST":
+                    o = gl.NEAREST_MIPMAP_NEAREST; break;
+                case "LINEAR_MIPMAP_NEAREST":
+                    o = gl.LINEAR_MIPMAP_NEAREST; break;
+                case "NEAREST_MIPMAP_LINEAR":
+                    o = gl.NEAREST_MIPMAP_LINEAR; break;
+                case "LINEAR_MIPMAP_LINEAR":
+                    o = gl.LINEAR_MIPMAP_LINEAR; break;
+            }
+            if (o) {
+                if (object == "box" && filter == "min")
+                    TEX_MIN_FILTER_BOX = o;
+                if (object == "box" && filter == "mag")
+                    TEX_MAG_FILTER_BOX = o;
+                if (object == "sbx" && filter == "min")
+                    TEX_MIN_FILTER_SBX = o;
+                if (object == "sbx" && filter == "mag")
+                    TEX_MAG_FILTER_SBX = o;
+
+                loadImages(onImagesLoaded)
+            }
+        }
+
+        // zmiana opcji generowania MipMapy
+        function chooseMipmap(event, object) {
+            switch (object) {
+                case "box":
+                    MIPMAP_BOX = event.target.checked; break;
+                case "sbx":
+                    MIPMAP_SBX = event.target.checked; break;
+            }
+            loadImages(onImagesLoaded)
+        }
+
+        // załadowanie obrazków
+        function loadImages(onAllLoaded) {
+            const urls = {
+                "sbx_front": "https://i.imgur.com/zhtHpuH.png",
+                "sbx_back": "https://i.imgur.com/wSPnNCl.png",
+                "sbx_top": "https://i.imgur.com/WRX1VAh.png",
+                "sbx_bottom": "https://i.imgur.com/fVMx2At.png",
+                "sbx_left": "https://i.imgur.com/BctMXJj.png",
+                "sbx_right": "https://i.imgur.com/CA6MHAO.png",
+
+                "box_front": "https://i.imgur.com/NMbpYDf.png",
+                "box_back": "https://i.imgur.com/xhcTfnK.png",
+                "box_top": "https://i.imgur.com/YAt22n2.png",
+                "box_bottom": "https://i.imgur.com/t6Lgk07.png",
+                "box_left": "https://i.imgur.com/YHjS6Nn.png",
+                "box_right": "https://i.imgur.com/1C8g1ju.png",
+
+                "box": "https://i.imgur.com/gAkh4Ey.png"
+            }
+            var loaded = 0
+            const imgs = {}
+            for (const [name, source] of Object.entries(urls)) {
+                const img = new Image()
+                img.crossOrigin = ""
+                img.src = source
+                imgs[name] = img
+                loaded++
+                img.onload = () => loaded === Object.keys(urls).length && onAllLoaded(imgs)
+            }
+        }
+
+        // utworzenie programu na podstawie shaderów
+        function createProgram(vertexShaderSource, fragmentShaderSource) {
+            // inicjalizacja i kompilacja VertexShadera
+            const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vertexShader, vertexShaderSource);
+            gl.compileShader(vertexShader);
+            if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(vertexShader));
+                console.log(gl);
+                return null;
+            }
+
+            // inicjalizacja i kompilacja FragmentShadera
+            const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fragmentShader, fragmentShaderSource);
+            gl.compileShader(fragmentShader);
+            if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+                console.log(gl.getShaderInfoLog(fragmentShader));
+                console.log(gl);
+                return null;
+            }
+
+            // dołączenie shaderów do programu
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.log("Could not initialise shaders");
+                console.log(gl);
+                return null;
+            }
+            return program
+        }
+
+        // utworzenie programu dla kostki i przypisanie mu odpowiednich atrybutów
+        function makeShaderProgramCube(gl) {
+            // stworzenie programu
+            shaderProgramCube = createProgram(
+                document.getElementById('vs-cube').firstChild.nodeValue,
+                document.getElementById('fs-cube').firstChild.nodeValue
+            )
+
+            // ustawienie localizacji zmiennych
+            gl.useProgram(shaderProgramCube)
+            shaderProgramCube.aVertexPosition = gl.getAttribLocation(shaderProgramCube, 'aVertexPosition')
+            shaderProgramCube.aTextureCoord = gl.getAttribLocation(shaderProgramCube, 'aTextureCoord')
+            shaderProgramCube.uMove = gl.getUniformLocation(shaderProgramCube, "uMove")
+            shaderProgramCube.uProjection = gl.getUniformLocation(shaderProgramCube, "uProjection")
+            shaderProgramCube.uRotation = gl.getUniformLocation(shaderProgramCube, "uRotation")
+            shaderProgramCube.sampler = gl.getUniformLocation(shaderProgramCube, "sampler")
+
+            // załadowanie buforów danych
+            var xPlusFloat32Array = new Float32Array([
+                +1, +1, +1,
+                +1, -1, +1,
+                +1, -1, -1,
+                +1, +1, -1,
+            ]);
+            var xMinusFloat32Array = new Float32Array([
+                -1, +1, -1,
+                -1, -1, -1,
+                -1, -1, +1,
+                -1, +1, +1,
+            ]);
+            var yPlusFloat32Array = new Float32Array([
+                -1, 1, -1,
+                -1, 1, +1,
+                +1, 1, +1,
+                +1, 1, -1,
+            ]);
+            var yMinusFloat32Array = new Float32Array([
+                -1, -1, +1,
+                -1, -1, -1,
+                +1, -1, -1,
+                +1, -1, +1,
+            ]);
+            var zPlusFloat32Array = new Float32Array([
+                -1, +1, 1,
+                -1, -1, 1,
+                +1, -1, 1,
+                +1, +1, 1,
+            ]);
+            var zMinusFloat32Array = new Float32Array([
+                +1, +1, -1,
+                +1, -1, -1,
+                -1, -1, -1,
+                -1, +1, -1,
+            ]);
+            var texCoordsFloat32Array = new Float32Array([
+                0, 0,
+                0, 1,
+                1, 1,
+                1, 0,
+            ]);
+
+            shaderProgramCube.zMinusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.zMinusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, zMinusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.zPlusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.zPlusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, zPlusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.xMinusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.xMinusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, xMinusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.xPlusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.xPlusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, xPlusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.yMinusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.yMinusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, yMinusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.yPlusArrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.yPlusArrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, yPlusFloat32Array, gl.STATIC_DRAW);
+
+            shaderProgramCube.texCoordsBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.texCoordsBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, texCoordsFloat32Array, gl.STATIC_DRAW);
+
+            // sukces
+            return shaderProgramCube
+        }
+
+        // utworzenie programu dla sky-boxa i przypisanie mu odpowiednich atrybutów
+        function makeShaderProgramSkybox(gl) {
+            // stworzenie programu
+            shaderProgramSkybox = createProgram(
+                document.getElementById('vs-sbx').firstChild.nodeValue,
+                document.getElementById('fs-sbx').firstChild.nodeValue
+            )
+
+            // ustawienie localizacji zmiennych
+            shaderProgramSkybox.aVertexPosition = gl.getAttribLocation(shaderProgramSkybox, 'aVertexPosition')
+            shaderProgramSkybox.uProjection = gl.getUniformLocation(shaderProgramSkybox, "uProjection");
+            shaderProgramSkybox.uView = gl.getUniformLocation(shaderProgramSkybox, "uView");
+            shaderProgramSkybox.sampler = gl.getUniformLocation(shaderProgramSkybox, "sampler");
+
+            // załadowanie buforów danych
+            var sbx_Float32Array = new Float32Array([
+                -1, 1, -1,
+                -1, -1, -1,
+                +1, -1, -1,
+                +1, -1, -1,
+                +1, 1, -1,
+                -1, 1, -1,
+                -1, -1, 1,
+                -1, -1, -1,
+                -1, 1, -1,
+                -1, 1, -1,
+                -1, 1, 1,
+                -1, -1, 1,
+                +1, -1, -1,
+                +1, -1, 1,
+                +1, 1, 1,
+                +1, 1, 1,
+                +1, 1, -1,
+                +1, -1, -1,
+                -1, -1, 1,
+                -1, 1, 1,
+                +1, 1, 1,
+                +1, 1, 1,
+                +1, -1, 1,
+                -1, -1, 1,
+                -1, 1, -1,
+                +1, 1, -1,
+                +1, 1, 1,
+                +1, 1, 1,
+                -1, 1, 1,
+                -1, 1, -1,
+                -1, -1, -1,
+                -1, -1, 1,
+                +1, -1, -1,
+                +1, -1, -1,
+                -1, -1, 1,
+                +1, -1, 1
+            ]);
+            shaderProgramSkybox.arrayBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramSkybox.arrayBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, sbx_Float32Array, gl.STATIC_DRAW);
+
+            // stworzenie tekstury
+            shaderProgramSkybox.textureId = gl.createTexture();
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, shaderProgramSkybox.textureId);
+
+            // sukces
+            return shaderProgramSkybox
+        }
+
+        // sprawdzenie czy wartość jest potęgą dwójki (na potrzeby mipmap)
+        function isPowerOf2(value) {
+            return (value & (value - 1)) == 0;
+        }
+
+        // załadowanie tekstur z obrazka dla kostki
+        function loadTexture2DFromImage(gl, image) {
+            var textureId = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, textureId);
+            if (isPowerOf2(canvas.width) && isPowerOf2(canvas.height))
+                gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, TEX_MAG_FILTER_BOX);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, TEX_MIN_FILTER_BOX);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.bindTexture(gl.TEXTURE_2D, textureId);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+            return textureId
+        }
+        
+        // załadowanie tekstur z obrazka dla sky-boxa
+        function loadCubeFromImage(gl, image, cubeFace) {
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, shaderProgramSkybox.textureId);
+            if (isPowerOf2(canvas.width) && isPowerOf2(canvas.height))
+                gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, TEX_MAG_FILTER_SBX);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, TEX_MIN_FILTER_SBX);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(cubeFace, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        }
+
+        // inicjalizacja WebGL, załadowanie i skompilowanie shaderów, etc
+        function onImagesLoaded(imgs) {
+
+            // pobranie canvas i WebGL Context
+            const canvas = document.getElementById('canvas');
+            gl = canvas.getContext('webgl');
+
+            // sprawdzenie, czy WebGL jest wspierany przez przeglądarkę
+            if (gl === null) {
+                alert('Nie da się zainicjalizować WebGL w tej przeglądarce');
+                throw new Error('Nie da się zainicjalizować WebGL w tej przeglądarce');
+            }
+
+            // zmiana rozmiaru canvas, tak żeby webgl rozpoznawał realne
+            // rozmiary, ponieważ jak są one ustawiane w <style> to webgl
+            // wykorzystuje domyslny wymiar (300, 150)
+            gl.canvas.width = gl.canvas.clientWidth;
+            gl.canvas.height = gl.canvas.clientHeight;
+            gl.viewportWidth = gl.canvas.clientWidth;
+            gl.viewportHeight = gl.canvas.clientHeight;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // ustawienie trybów filtrowania
+            TEX_MIN_FILTER_BOX = TEX_MIN_FILTER_BOX ? TEX_MIN_FILTER_BOX : gl.LINEAR;
+            TEX_MAG_FILTER_BOX = TEX_MAG_FILTER_BOX ? TEX_MAG_FILTER_BOX : gl.LINEAR;
+            TEX_MIN_FILTER_SBX = TEX_MIN_FILTER_SBX ? TEX_MIN_FILTER_SBX : gl.LINEAR;
+            TEX_MAG_FILTER_SBX = TEX_MAG_FILTER_SBX ? TEX_MAG_FILTER_SBX : gl.LINEAR;
+
+            // stworzenie programu dla kostki
+            makeShaderProgramCube(gl)
+            // stworzenie programu dla skyboxa
+            makeShaderProgramSkybox(gl)
+
+            // wypełnienie teksturami kostki
+            shaderProgramCube.textureIds = []
+            imgFace = ["box_front", "box_back", "box_top", "box_bottom", "box_left", "box_right"]
+            for (var i = 0; i < 6; i++) {
+                var textureId = loadTexture2DFromImage(gl, imgs[imgFace[i]])
+                shaderProgramCube.textureIds.push(textureId)
+            }
+
+            // wypełnienie teksturami skyboxa
+            cubeFace = [
+                gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+                gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+                gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+                gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+                gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+            ];
+            imgFace = ["sbx_front", "sbx_back", "sbx_top", "sbx_bottom", "sbx_left", "sbx_right"]
+            for (var i = 0; i < 6; i++) {
+                loadCubeFromImage(gl, imgs[imgFace[i]], cubeFace[i])
+            }
+
+            draw()
+        }
+
+        // narysowanie od nowa sceny po zmianach
+        function draw() {
+            var projectionMatrix = glMatrix4FromMatrix(
+                createProjectionMatrix4(
+                    gl,
+                    PROJECTION_Z_NEAR,
+                    PROJECTION_Z_FAR,
+                    PROJECTION_ZOOM_Y
+                )
+            );
+            var rotationMatrix = glMatrix4FromMatrix(rotationMatrix4);
+
+            // ustawienie koloru tła na biały
+            gl.clearColor(1.0, 1.0, 1.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.enable(gl.DEPTH_TEST);
+
+            // narysowanie kostki
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.xPlusArrayBuffer, shaderProgramCube.textureIds[0])
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.xMinusArrayBuffer, shaderProgramCube.textureIds[1])
+
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.yPlusArrayBuffer, shaderProgramCube.textureIds[2])
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.yMinusArrayBuffer, shaderProgramCube.textureIds[3])
+
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.zPlusArrayBuffer, shaderProgramCube.textureIds[4])
+            drawBufferFaceCube(gl, rotationMatrix, moveVector, projectionMatrix,
+                shaderProgramCube.zMinusArrayBuffer, shaderProgramCube.textureIds[5])
+
+            // narysowanie skyboxa
+            drawSkybox(gl, rotationMatrix, projectionMatrix)
+        }
+
+        // narysowanie ściany kostki
+        function drawBufferFaceCube(gl, rotation, move, projection, buffer, textureId) {
+            gl.depthFunc(gl.LESS);
+
+            gl.useProgram(shaderProgramCube);
+
+            gl.uniformMatrix4fv(shaderProgramCube.uRotation, false, rotation);
+            gl.uniform3fv(shaderProgramCube.uMove, move);
+            gl.uniformMatrix4fv(shaderProgramCube.uProjection, false, projection);
+
+            gl.enableVertexAttribArray(shaderProgramCube.aVertexPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.vertexAttribPointer(shaderProgramCube.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+
+            gl.enableVertexAttribArray(shaderProgramCube.aTextureCoord);
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramCube.texCoordsBuffer);
+            gl.vertexAttribPointer(shaderProgramCube.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, textureId);
+
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        }
+
+        // narysowanie skyboxa
+        function drawSkybox(gl, view, projection) {
+            gl.depthFunc(gl.LEQUAL);
+
+            gl.useProgram(shaderProgramSkybox);
+
+            gl.uniformMatrix4fv(shaderProgramSkybox.uView, false, view);
+            gl.uniformMatrix4fv(shaderProgramSkybox.uProjection, false, projection);
+
+            gl.enableVertexAttribArray(shaderProgramSkybox.aVertexPosition);
+            gl.bindBuffer(gl.ARRAY_BUFFER, shaderProgramSkybox.arrayBuffer);
+            gl.vertexAttribPointer(shaderProgramSkybox.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, shaderProgramSkybox.textureId);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            gl.depthFunc(gl.LESS);
+        }
+    </script>
+</body>
+
+</html>
