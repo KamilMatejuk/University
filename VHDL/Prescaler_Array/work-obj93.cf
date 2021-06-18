@@ -1,0 +1,7 @@
+v 4
+file . "prescaler_tb.vhd" "7b4a27e231eb44c18a6eb9a491b5568a3b54b8dc" "20210602100045.738":
+  entity prescaler_tb at 1( 0) + 0 on 73;
+  architecture behavior of prescaler_tb at 10( 177) + 0 on 74;
+file . "prescaler.vhd" "028906e80cf4586ef80b92d57fd7035bbcdfc03d" "20210602100045.642":
+  entity prescaler at 1( 0) + 0 on 71;
+  architecture prescaler_arch of prescaler at 16( 375) + 0 on 72;

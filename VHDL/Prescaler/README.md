@@ -1,0 +1,2 @@
+# Prescaler
+Take an input clock and a scale, and return a clock that is `scale` times slower. The original clock is `125 MHz`, try to create clocks `100 Hz`, `1.1 kHz`, and `50 MHz`. Calculate relative errors.

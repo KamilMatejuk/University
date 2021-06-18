@@ -1,0 +1,10 @@
+1, jednostka testowa, uut1, uut2, uut3
+2, częstotliwość zegara głównego, 125 MHz, 125 MHz, 125 MHz
+3, okres zegara głównego, 8 ns, 8 ns, 8 ns
+4, oczekiwana częstotliwość jednostki testowej, 100 Hz, 1.1 kHz, 50 MHz
+5, oczekiwany okres jednostki testowej, 10 ms, 909 us, 20 ns
+6, skalar przeliczenia (częstotliwość zegara / częstotliwość jednostki), 1 250 000, 113 636.364, 2.5
+7, użyty skalar przeliczenia, 1 250 000, 113 636, 2
+6, rzeczywista częstotliwość jednostki testowej, 100 Hz, 1100.00352 Hz, 62.5 MHz
+7, rzeczywisty okres jednostki testowej, 10 ms, 909088 ns, 16 ns
+8, błąd (%), 0 %, 0.00032 %, 25%
