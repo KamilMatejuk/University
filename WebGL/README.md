@@ -1,21 +1,29 @@
 ## Contents
 ### `06.2021`<br/>
 ├─» [3D_Graph](#3d-graph) `3D Objects` `Lighting` `Animation` `ColorMask`<br/>
-│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [3D_Graph](#3d-graph)<br/>
-│         ├─» [3D_Graph](#3d-graph)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [3D_Graph_Lighting](#3d-graph)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [3D_Graph_Animation](#3d-graph)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [3D_Graph_Animation_Odd](#3d-graph)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─» [3D_Graph_Anaglyph](#3d-graph)<br/>
 └─» [Textured_Cube](#textured-cube) `3D Textures` `Skybox` `Camera`<br/>
 ### `05.2021`<br/>
 ├─» [Koch_Snowflake](#koch-snowflake) `Fractal`<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Koch_Snowflake_SVG](#koch-snowflake)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Koch_Snowflake_WebGL](#koch-snowflake)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Koch_Snowflake_Layered](#koch-snowflake)<br/>
 ├─» [Sierpinsky_Triangle](#sierpinsky-triangle) `Fractal`<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Sierpinsky_Triangle_SVG](#sierpinsky-triangle)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Sierpinsky_Triangle_WebGL](#sierpinsky-triangle)<br/>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─» [Sierpinsky_Triangle_Layered](#sierpinsky-triangle)<br/>
 ├─» [Pong](#pong) `Animations`<br/>
 ├─» [Pong_Textured](#pong-textured) `Textures`<br/>
 └─» [Render_Types](#render-types) `Uniforms`<br/>
 ### `04.2021`<br/>
 ├─» [Maze](#maze) `3D Objects`<br/>
-├─» [Turtle_1](#turtle-1) `2D Logo`<br/>
-├─» [Turtle_2](#turtle-2) `2D Logo`<br/>
-└─» [Turtle_3D](#turtle-3d) `3D Logo`<br/>
-
+└─» [Turtle](#turtle) `2D Logo`<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Turtle_1](#turtle)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─» [Turtle_2](#turtle)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─» [Turtle_3D](#turtle)<br/>
 ## Topics
 ### 3D_Graph
 Draw a `R^2 -> R` graph, and allow user to change camera orientation, as well as choosing drawn function.
@@ -48,11 +56,6 @@ Show differences between WebGL render types. The user can add points in canvas b
 ### Textured_Cube
 Load textures into cube, as well as skybox. The user can change minfication / magnification filters, and change perspective of camera using arrows on keyboard.
 
-### Turtle 1
+### Turtle
 Implement procedure of *Turtle Graphics*, also known as [Logo programming language](https://en.wikipedia.org/wiki/Logo_(programming_language)). Using commands `forward`, `left` and `right`, draw some shapes in different colours.
-
-### Turtle 2
-Implement procedure of *Turtle Graphics*, also known as [Logo programming language](https://en.wikipedia.org/wiki/Logo_(programming_language)). Get coanvas scaled boundries form user, as well as drawing color. Give user option to input commands (`forward`, `left`, `right`) to draw path in specified color.
-
-### Turtle 3D
-Implement procedure of *Turtle Graphics*, also known as [Logo programming language](https://en.wikipedia.org/wiki/Logo_(programming_language)). Now the user can move in 3 dimentions, using commands `forward`, `left`, `right`, `up`, `down`.
+In version 2, get coanvas scaled boundries form user, as well as drawing color, and give user option to input commands (`forward`, `left`, `right`) to draw path in specified color. 3D version allows user to move in 3 dimentions, using commands `forward`, `left`, `right`, `up`, `down`.
