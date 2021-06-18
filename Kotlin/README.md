@@ -1,12 +1,16 @@
 ## Contents
-* `SurfaceView` [Arkanoid](#arkanoid)
-* `ViewPager2` `CameraX` [Gallery](#gallery)
-* `Fragments` [Hangman](#hangman)
-* `Google Map` `Firebase` [Maps](#Maps)
-* `API` `Retrofit` [Math_Operations](#math-operations)
-* `Firebase` [Messanger](#messanger)
-* `Fragments` [Tic_Tac_Toe](#tic-tac-toe)
-* `Database` `Notifications` [To_Do](#to-do)
+### `06.2021`<br/>
+├─» [Maps](#Maps)`Google Map` `Firebase`<br/>
+└─» [Math_Operations](#math-operations) `API` `Retrofit`<br/>
+### `05.2021`<br/>
+├─» [Messanger](#messanger) `Firebase`<br/>
+└─» [Arkanoid](#arkanoid) `SurfaceView`<br/>
+### `04.2021`<br/>
+└─» [Gallery](#gallery) `ViewPager2` `CameraX`<br/>
+### `03.2021`<br/>
+├─» [To_Do](#to-do) `Database` `Notifications`<br/>
+├─» [Hangman](#hangman) `Fragments`<br/>
+└─» [Tic_Tac_Toe](#tic-tac-toe) `Fragments`<br/>
 
 ## Info
 These are Android Studio projects, packed into `.zip` files, writtent for Android 11 *(target api 30)*.
