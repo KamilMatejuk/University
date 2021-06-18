@@ -1,8 +1,10 @@
 ## Contents
-* `Math` [Postfix_Calculator](#Postfix_Calculator)
-* `Syntax` [Remove_Cpp_Comments](#Remove_Cpp_Comments)
-* `Syntax` [Remove_Python_Comments](#Remove_Python_Comments)
-* `Syntax` [Remove_White_Chars](#Remove_White_Chars)
+### `11.2020`<br/>
+└─» [Postfix_Calculator](#Postfix_Calculator) `Math`<br/>
+### `10.2020`<br/>
+├─» [Remove_Cpp_Comments](#Remove_Cpp_Comments) `Syntax`<br/>
+├─» [Remove_Python_Comments](#Remove_Python_Comments) `Syntax`<br/>
+└─» [Remove_White_Chars](#Remove_White_Chars) `Syntax`<br/>
 
 ## Topics
 
