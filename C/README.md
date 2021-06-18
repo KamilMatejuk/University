@@ -1,14 +1,15 @@
 ## Contents
-* `Basic` [Agent_Na_Plaszczyznie](#Agent_Na_Plaszczyznie)
-* `Game` [Gra_Mastermind](#Gra_Mastermind)
-* `Pattern` [Wzorzec_w_Ciagu_Znakow](#Wzorzec_w_Ciagu_Znakow)
-* `Basic` [Bankomat](#Bankomat)
-* `Data Structures` [FIFO_Queue](#FIFO_Queue)
-* `Math` [Liczby_Doskonale_i_Zaprzyjaznione](#Liczby_Doskonale_i_Zaprzyjaznione)
-* `Data Structures` [One_Direction_List](#One_Direction_List)
-* `Data Structures` [Two_Direction_List](#Two_Direction_List)
-* `Basic` [Print_All_Colors](#Print_All_Colors)
-
+### `06.2020`<br/>
+├─»  [FIFO_Queue](#FIFO_Queue) `Data Structures`<br/>
+├─»  [One_Direction_List](#One_Direction_List) `Data Structures`<br/>
+├─»  [Two_Direction_List](#Two_Direction_List) `Data Structures`<br/>
+├─»  [Liczby_Doskonale_i_Zaprzyjaznione](#Liczby_Doskonale_i_Zaprzyjaznione) `Math`<br/>
+├─»  [Bankomat](#Bankomat) `Basic`<br/>
+└─»  [Print_All_Colors](#Print_All_Colors) `Basic`<br/>
+### `04.2020`<br/>
+├─» [Gra_Mastermind](#Gra_Mastermind) `Game`<br/>
+├─» [Wzorzec_w_Ciagu_Znakow](#Wzorzec_w_Ciagu_Znakow) `Pattern`<br/>
+└─» [Agent_Na_Plaszczyznie](#Agent_Na_Plaszczyznie) `Basic`<br/>
 ## Topics
 ### Agent_Na_Plaszczyznie
 More info in [folder](Agent_Na_Płaszczyznie).
