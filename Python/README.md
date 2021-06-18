@@ -1,28 +1,36 @@
 ## Contents
-* `Metaheuristics` [Simulated_Anneling_Maze](#Simulated_Anneling_Maze)
-* `Metaheuristics` [Simulated_Anneling_Metrices](#Simulated_Anneling_Metrices)
-* `Metaheuristics` [Simulated_Anneling_Multidimentional_Function](#Simulated_Anneling_Multidimentional_Function)
-* `Metaheuristics` [Swarm_Optimalization_Multidimentional_Function](#Swarm_Optimalization_Multidimentional_Function)
-* `Metaheuristics` [Tabu_Search_Maze](#Tabu_Search_Maze)
-* `Metaheuristics` [Tabu_Search_Multidimentional_Function](#Tabu_Search_Multidimentional_Function)
-* `Metaheuristics` [Tabu_Search_TSP](#Tabu_Search_TSP)
-* `Network` [CSMA_CD_Ethernet_Simulation](#CSMA_CD_Ethernet_Simulation)
-* `Basic` [Convert_Roman_to_Arabic](#Convert_Roman_to_Arabic)
-* `Network` [Data_Framing](#Data_Framing)
-* `Data Structures` [DFS_BFS_Tree](#DFS_BFS_Tree)
-* `Natwork` [Estimating_Net_Reliabality](#Estimating_Net_Reliabality)
-* `Basic` [Find_Repeting_Files](#Find_Repeting_Files)
-* `Data Structures` [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication)
-* `Basic` [Lowercase_Files_Names](#Lowercase_Files_Names)
-* `Matrix` `Numeric ALgebra` [Matrix_Decomposition_QR](#matrix-decomposition-qr)
-* `Linear Regression` [Movie_Recomendation](#Movie_Recomendation)
-* `Machine Learning` [Neural_Network_XOR](#Neural_Network_XOR)
-* `Machine Learning` [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation)
-* `Basic` [Pascal_Triangle](#Pascal_Triangle)
-* `Command Line` [Password Validator Cmd](#Password_Validator_Cmd)
-* `Language Processing` [Pattern_Search_FA](#Pattern_Search_FA)
-* `Language Processing` [Pattern_Search_KMP](#Pattern_Search_KMP)
-* `Cryptography` [RSA_Encryption_Decryption](#RSA_Encryption_Decryption)
+### `06.2021`<br/>
+└─» [Matrix_Decomposition_QR](#matrix-decomposition-qr) `Matrix` `Numeric ALgebra`<br/>
+### `04.2021`<br/>
+└─» [Password Validator Cmd](#Password_Validator_Cmd) `Command Line`<br/>
+### `10.2020`<br/>
+├─» [Pattern_Search_FA](#Pattern_Search_FA) `Language Processing`<br/>
+└─» [Pattern_Search_KMP](#Pattern_Search_KMP) `Language Processing`<br/>
+### `08.2020`<br/>
+└─» [CSMA_CD_Ethernet_Simulation](#CSMA_CD_Ethernet_Simulation) `Network`<br/>
+### `06.2020`<br/>
+├─» [Movie_Recomendation](#Movie_Recomendation) `Linear Regression`<br/>
+├─» [Neural_Network_XOR](#Neural_Network_XOR) `Machine Learning`<br/>
+├─» [Neural_Network_Function_Approximation](#Neural_Network_Function_Approximation) `Machine Learning`<br/>
+├─» [Data_Framing](#Data_Framing) `Network`<br/>
+├─» [DFS_BFS_Tree](#DFS_BFS_Tree) `Data Structures`<br/>
+├─» [Fourier_Transfrom_Multiplication](#Fourier_Transfrom_Multiplication) `Data Structures`<br/>
+├─» [RSA_Encryption_Decryption](#RSA_Encryption_Decryption) `Cryptography`<br/>
+├─» [Find_Repeting_Files](#Find_Repeting_Files) `Basic`<br/>
+├─» [Pascal_Triangle](#Pascal_Triangle) `Basic`<br/>
+├─» [Lowercase_Files_Names](#Lowercase_Files_Names) `Basic`<br/>
+└─» [Convert_Roman_to_Arabic](#Convert_Roman_to_Arabic) `Basic`<br/>
+### `05.2020`<br/>
+├─» [Swarm_Optimalization_Multidimentional_Function](#Swarm_Optimalization_Multidimentional_Function) `Metaheuristics`<br/>
+└─» [Estimating_Net_Reliabality](#Estimating_Net_Reliabality) `Natwork`<br/>
+### `04.2020`<br/>
+├─» [Simulated_Anneling_Maze](#Simulated_Anneling_Maze) `Metaheuristics`<br/>
+├─» [Simulated_Anneling_Metrices](#Simulated_Anneling_Metrices) `Metaheuristics`<br/>
+├─» [Simulated_Anneling_Multidimentional_Function](#Simulated_Anneling_Multidimentional_Function) `Metaheuristics`<br/>
+├─» [Tabu_Search_Maze](#Tabu_Search_Maze) `Metaheuristics`<br/>
+├─» [Tabu_Search_Multidimentional_Function](#Tabu_Search_Multidimentional_Function) `Metaheuristics`<br/>
+└─» [Tabu_Search_TSP](#Tabu_Search_TSP) `Metaheuristics`<br/>
+
 
 ## Topics
 ### Simulated_Anneling_Maze
