@@ -1,13 +1,14 @@
 ## Contents
-* `Logic` [Zachlanny_Bankier](#Zachlanny_Bankier)
-* `Logic` [Ksiazki_Na_Polce](#Ksiazki_Na_Polce)
-* `Logic` [Ksiazki_Na_Polce_Odwrotnie](#Ksiazki_Na_Polce_Odwrotnie)
-* `Math` [Maly_Symbol_Newtona](#Maly_Symbol_Newtona)
-* `Logic` [Maskowanie](#Maskowanie)
-* `Inheritance` [Pole_i_Obwod_Figury](#Pole_i_Obwod_Figury)
-* `Math` [Przerwany_Fibonacci](#Przerwany_Fibonacci)
-* `Math` [Wiersz_Trojkata_Pascala](#Wiersz_Trojkata_Pascala)
-
+### `06.2020`<br/>
+├─» [Ksiazki_Na_Polce](#Ksiazki_Na_Polce) `Logic`<br/>
+├─» [Ksiazki_Na_Polce_Odwrotnie](#Ksiazki_Na_Polce_Odwrotnie) `Logic`<br/>
+├─» [Maly_Symbol_Newtona](#Maly_Symbol_Newtona) `Math`<br/>
+├─» [Maskowanie](#Maskowanie) `Logic`<br/>
+├─» [Pole_i_Obwod_Figury](#Pole_i_Obwod_Figury) `Inheritance`<br/>
+├─» [Przerwany_Fibonacci](#Przerwany_Fibonacci) `Math`<br/>
+└─» [Wiersz_Trojkata_Pascala](#Wiersz_Trojkata_Pascala) `Math`<br/>
+### `04.2020`<br/>
+└─» [Zachlanny_Bankier](#Zachlanny_Bankier) `Logic`<br/>
 ## Topics
 ### Zachlanny_Bankier
 More info in [folder](Zachlanny_Bankier).
